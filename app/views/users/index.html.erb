@@ -1,0 +1,25 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<div class="card">
+  <img src="https://cdn0.iconfinder.com/data/icons/communication-line-10/24/account_profile_user_contact_person_avatar_placeholder-512.png" alt="John" style="width:100%">
+  <h1><%=current_user.name %></h1>
+  <% if current_user.student_department == nil and current_user.teacher_department.nil? and current_user.department_head_department.nil? %>
+    <p class="title">N/A</p>
+  <%elsif !current_user.teacher_department.nil? %>
+    <p class="title"><%=current_user.teacher_department.department_name %></p>
+    <%elsif !current_user.student_department.nil? %>
+        <p class="title"><%=current_user.student_department.department_name %></p>
+
+      <%elsif !current_user.department_head_department.nil? %>
+          <p class="title"><%=current_user.department_head_department.department_name %></p>
+  <%end %>
+
+  <p>Email: <%=current_user.email %></p>
+  <p>Phone: <%=current_user.phone %></p>
+  <p>Address: <%=current_user.address %></p>
+
+
+  <p>---- University</p>
+  <a href="<%=profile_edit_page_path %>" class=""><p><button>Edit</button></p></a>
+
+</div>

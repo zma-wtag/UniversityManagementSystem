@@ -1,0 +1,53 @@
+<h1>Departments</h1>
+<a href="<%= create_departments_path %>"><button class="btn btn-outline-primary">Add</button></a>
+<%if @departments.count < 1%>
+  <h3>No Department available!</h3>
+  <%else %>
+<table class="table table-hover">
+  <thead>
+  <tr>
+    <th>Department</th>
+    <th>Department Head</th>
+    <th>Total Teachers</th>
+    <th>Total Students</th>
+    <th>Total Courses</th>
+    <th>View</th>
+    <th>Edit</th>
+    <th>Delete</th>
+
+  </tr>
+  </thead>
+<tbody>
+<% @departments.each do |department| %>
+  <tr>
+    <td><%=department[:department_name] %></td>
+    <%if department.department_head.nil? %>
+      <td>N/A</td>
+      <%else %>
+    <td><%=department.department_head.name %></td>
+    <%end %>
+      <td><%=department.teachers.count %></td>
+    <td><%=department.students.count %></td>
+    <td><%=department.courses.count %></td>
+    <td><a href="<%=show_department_path(department) %>">
+      <input type="button" class="btn btn-outline-success" value="View" />
+    </a></td>
+    <td><a href="<%=edit_department_path(department) %>">
+      <input type="button" class="btn btn-outline-info" value="Edit" />
+    </a></td>
+
+    <td><a href="<%=destroy_department_path(department) %>">
+      <input type="button" class="btn btn-outline-danger" value="Delete" />
+    </a></td>
+<!--    <td><a href="<%#=show_courses_path(course) %>">-->
+<!--      <input type="button" value="Edit" />-->
+<!--    </a></td>-->
+<!--    <td><a href="<%#=delete_courses_path(course) %>">-->
+<!--      <input type="button" value="Delete" />-->
+<!--    </a></td>-->
+  </tr>
+<% end %>
+</tbody>
+</table>
+<%end %>
+

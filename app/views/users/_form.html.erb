@@ -1,0 +1,35 @@
+<div class="text-field form-group">
+  <%= form.label :email %>
+  <%= form.text_field :email, type: 'email', class: "form-control", value: @user.email %>
+</div>
+
+<div class="password-field form-group">
+  <%= form.label :password %>
+  <%= form.password_field :password , class: "form-control"  %>
+</div>
+
+<div class="text-field form-group">
+  <%= form.label :name %>
+  <%= form.text_field :name, type: 'text' , class: "form-control"  %>
+</div>
+
+<div class="text-field form-group">
+  <%= form.label :address %>
+  <%= form.text_field :address, type: 'text' , class: "form-control" %>
+</div>
+
+<div class="text-field form-group">
+  <%= form.label :phone %>
+  <%= form.text_field :phone, type: 'text' , class: "form-control" %>
+</div>
+
+<div class="text-field form-group">
+  <%= form.label :role %>
+  <%= form.text_field :role, type: 'text', :value=>@role , :readonly => true , class: "form-control"  %>
+</div>
+
+<div class="text-field form-group">
+  <%= form.label :Department %>
+<%= select_tag(@role+"_department", options_for_select(@departments,params[:per_page].to_i),{ :name => "user["+@role+"_department]", class: "form-control"}) %>
+</div>
+<br/>

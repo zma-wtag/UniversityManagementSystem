@@ -1,0 +1,10 @@
+<div id="clearance" class="sign-up">
+  <h2><%= t(".title") %></h2>
+  <%= form_with model: @user do |form| %>
+    <%= render partial: '/users/form', object: form %>
+
+    <div class="submit-field">
+      <button class="btn btn-success">Create</button>
+    </div>
+  <% end %>
+</div>

@@ -1,0 +1,33 @@
+
+
+<% if @department.id.nil?%>
+  <h1>Add Department</h1>
+<form action="<%=store_department_path %>" method="post">
+<%else %>
+  <h1>Update Department</h1>
+  <form action="<%=update_department_path %>" method="post">
+<%end %>
+  <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+  <label for="department[department_name]">Department Name: </label>
+  <input type="text" name="department[department_name]" value="<%=@department[:department_name]%>">
+
+
+
+<!--  <label for="department_head">Department Head :</label>-->
+
+<!--  <select id="department_head" name="department[department_head_id]" >-->
+    <%# @departmentHeads.each do |departmentHead| %>
+      <%#if departmentHead== @department.department_head %>
+<!--        <option selected value="<%#=departmentHead[:id] %>"><%#=departmentHead[:name] %></option>-->
+        <%#else %>
+<!--        <option value="<%#=departmentHead[:id] %>"><%#=departmentHead[:name] %></option>-->
+        <%#end %>
+
+    <%# end %>
+<!--  </select>-->
+
+
+  <label for="department" >
+
+  <input type="submit">
+</form>

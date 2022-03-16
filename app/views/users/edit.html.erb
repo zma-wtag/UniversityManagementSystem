@@ -1,0 +1,42 @@
+<form action="<%=profile_update_path %>" method="post">
+  <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+  <div class="form-row">
+    <div class="form-group col-md-6">
+      <label for="inputEmail4">Email</label>
+      <input type="email" class="form-control" name="user[email]" id="inputEmail4" placeholder="Email" value="<%=@user.email %>">
+    </div>
+    <div class="form-group col-md-6">
+      <label for="inputName">Name</label>
+      <input type="text" class="form-control"  name="user[name]" id="inputName" placeholder="name" value="<%=@user.name %>" >
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="inputPhone">Phone</label>
+    <input type="text" class="form-control" id="inputPhone" name="user[phone]" placeholder="+8801845454***" value="<%=@user.phone %>">
+  </div>
+  <div class="form-group">
+    <label for="inputAddress">Address</label>
+    <input type="text" class="form-control" id="inputAddress" name="user[address]" placeholder="1234 Main St" value="<%=@user.address %>" >
+  </div>
+
+  <div class="form-group">
+    <label for="role">Role</label>
+    <input type="text" class="form-control" readonly id="role" name="user[role]" placeholder="1234 Main St" value="<%= @role %>" >
+  </div>
+  <div class="from-group">
+    <label for="department" >Department :</label>
+
+    <select id="department" class="custom-select my-1 mr-sm-2" name="<%="user["+@role+"_department_id]" %>">
+      <% @departments.each do |department| %>
+        <% if department.id== @user[@role+'_department_id'] %>
+          <option value="<%=department[:id] %>" selected ><%=department[:department_name] %></option>
+        <%else %>
+          <option value="<%=department[:id] %>"><%=department[:department_name] %></option>
+        <%  end %>
+      <% end %>
+    </select>
+  </div>
+<br/>
+  <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+

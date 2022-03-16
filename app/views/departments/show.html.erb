@@ -1,0 +1,119 @@
+<h1><%=@department.department_name %> Department</h1>
+
+<br/>
+
+<form action="<%=department_head_update_path %>" method="post">
+  <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+  <select id="teacher" class="custom-select custom-select-lg mb-3" name="department_head_id" >
+    <% @teachers.each do |teacher| %>
+
+      <%if ! @department.department_head.nil? and teacher.id == @department.department_head.id %>
+        <option selected value="<%=teacher[:id] %>"><%=teacher[:name] %></option>
+      <%else %>
+        <option value="<%=teacher[:id] %>"><%=teacher[:name] %></option>
+      <%end %>
+
+    <% end %>
+  </select>
+  <input type="text" name="department_id" value="<%=@department.id %>" hidden>
+  <input type="submit">
+</form>
+
+<br/>
+<h3> Students List</h3>
+<% if @students.count <1 %>
+  <h4>No students available!</h4>
+<%else%>
+<table class="table table-hover">
+  <thead>
+  <tr>
+    <th>Name</th>
+    <th>email</th>
+    <th>phone</th>
+    <th>address</th>
+  </tr>
+
+  </thead>
+
+  <tbody>
+  <% @students.each do |student| %>
+  <tr>
+    <td><%=student.name %></td>
+    <td><%=student.email %></td>
+    <td><%=student.phone %></td>
+    <td><%=student.address %></td>
+  </tr>
+
+  <% end %>
+  </tbody>
+</table>
+<%end %>
+
+
+<br/>
+
+<h3> teachers List</h3>
+<%if @teachers.count < 1 %>
+  <h4> Teachers not available</h4>
+  <%else %>
+<table class="table table-hover">
+  <thead>
+  <tr>
+    <th>Name</th>
+    <th>email</th>
+    <th>phone</th>
+    <th>address</th>
+  </tr>
+
+  </thead>
+
+  <tbody>
+  <% @teachers.each do |teacher| %>
+  <tr>
+    <td><%=teacher.name %></td>
+    <td><%=teacher.email %></td>
+    <td><%=teacher.phone %></td>
+    <td><%=teacher.address %></td>
+  </tr>
+  <% end %>
+  </tbody>
+</table>
+<%  end %>
+<br/>
+<h3> Course List </h3>
+<%if @courses.count < 1%>
+  <h4>No Courses available!</h4>
+<%else %>
+  <table class="table table-hover">
+    <thead>
+    <tr>
+      <th>Course code</th>
+      <th>Course Title</th>
+      <th>Course Credit</th>
+      <th>Semester</th>
+      <th>Teacher</th>
+      <th>Department</th>
+      <th>Edit</th>
+      <th>Delete</th>
+    </tr>
+    </thead>
+    <tbody>
+    <% @courses.each do |course| %>
+      <tr>
+        <td><%=course[:course_code] %></td>
+        <td><%=course[:course_title] %></td>
+        <td><%=course[:course_credit] %></td>
+        <td><%=course[:semester] %></td>
+        <td><%=course.teacher.name %></td>
+        <td><%=course.department.department_name %></td>
+        <td><a href="<%=show_courses_department_path(course,@department) %>">
+          <input type="button" class="btn btn-outline-info" value="Edit" />
+        </a></td>
+        <td><a href="<%=delete_courses_from_department_path(course,@department) %>">
+          <input type="button" class="btn btn-outline-danger" value="Delete" />
+        </a></td>
+      </tr>
+    <% end %>
+    </tbody>
+  </table>
+<%end %>
