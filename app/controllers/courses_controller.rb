@@ -1,14 +1,24 @@
 class CoursesController < ApplicationController
   def index
     @courses = Course.all
+    if signed_in? and current_user.role =='student'
+      @mycourses = current_user.student_courses
+    end
+    # render json: @mycourses
     # @teachers = User.where.not(teacher_department_id:nil)
     # render json: @courses
 
   end
   def new
-    @teachers = User.where.not(teacher_department_id:nil)
-    @departments = Department.all
+    if current_user.role == 'admin'
+      @teachers = User.where.not(teacher_department_id:nil)
+      @departments = Department.all
+    elsif current_user.role == 'department_head'
+      @teachers = User.where(teacher_department_id:current_user.department_head_department.id)
+      @departments = [current_user.department_head_department]
+    end
     @course = Course.new()
+    # render json: current_user.department_head_department
   end
 
   def create
@@ -41,9 +51,15 @@ class CoursesController < ApplicationController
     end
   end
   def show
+    if current_user.role == 'admin'
     @course = Course.find(params[:id])
     @teachers = User.where.not(teacher_department_id:nil)
     @departments = Department.all
+    else
+      @course = Course.find(params[:id])
+      @teachers = User.where(teacher_department_id:@course.department_id)
+      @departments = Department.where(id:@course.department_id)
+    end
     render "new"
   end
 

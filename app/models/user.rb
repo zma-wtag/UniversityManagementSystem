@@ -10,4 +10,5 @@ class User < ApplicationRecord
   belongs_to :teacher_department ,class_name: 'Department', inverse_of: 'teachers' , optional: true
   has_many :teacher_courses, class_name: 'Course', foreign_key: 'teacher_id', inverse_of: :teacher
 
+  enum role: %i(student teacher department_head admin)
 end

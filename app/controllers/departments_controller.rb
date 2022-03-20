@@ -41,6 +41,12 @@ class DepartmentsController < ApplicationController
     end
   end
 
+  def show_teacher
+    @teacher = User.find(params[:id])
+    @courses = @teacher.teacher_courses
+    render 'teacher_view'
+  end
+
   def destroy
     @department = Department.find(params[:id])
     if @department.destroy

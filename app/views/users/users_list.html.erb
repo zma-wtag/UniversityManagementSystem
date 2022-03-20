@@ -1,0 +1,48 @@
+<br/>
+<h3> User List</h3>
+<% if @users.count <1 %>
+  <h4>No User available!</h4>
+<%else%>
+  <table class="table table-hover">
+    <thead>
+    <tr>
+      <th>Name</th>
+      <th>Email</th>
+      <th>Phone</th>
+      <th>Address</th>
+      <th>Department</th>
+      <th>Role</th>
+      <th>Edit</th>
+    </tr>
+
+    </thead>
+
+    <tbody>
+    <% @users.each do |user| %>
+    <%if user.role != 'admin' %>
+      <tr>
+        <td><%=user.name %></td>
+        <td><%=user.email %></td>
+        <td><%=user.phone %></td>
+        <td><%=user.address %></td>
+        <%if user.role == 'student' %>
+          <td><%=user.student_department.department_name %></td>
+        <%elsif user.role == 'teacher' or user.role == 'department_head'%>
+          <td><%=user.teacher_department.department_name %></td>
+      <%end %>
+        <td><%=user.role %></td>
+        <td><a href="<%=edit_user_admin_path(user) %>">
+          <input type="button" class="btn btn-outline-info" value="Edit" />
+        </a></td>
+        <td><a href="<%=courses_list_user_path(user) %>">
+          <input type="button" class="btn btn-outline-dark" value="Courses" />
+        </a></td>
+      </tr>
+  <%end %>
+    <% end %>
+    </tbody>
+  </table>
+<%end %>
+
+
+<br/>

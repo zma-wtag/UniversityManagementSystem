@@ -20,6 +20,7 @@
 
 
   <p>---- University</p>
+  <%if current_user.role != 'admin' %>
   <a href="<%=profile_edit_page_path %>" class=""><p><button>Edit</button></p></a>
-
+  <%end %>
 </div>

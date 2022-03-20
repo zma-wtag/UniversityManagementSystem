@@ -1,5 +1,7 @@
 <h1>Courses</h1>
+<% if current_user.role == 'admin' or current_user.role == 'department_head' %>
 <a href="<%= create_courses_path %>"><button class="btn btn-outline-primary">Add</button></a>
+  <%end %>
 <%if @courses.count < 1%>
   <h3>No Courses available!</h3>
   <%else %>
@@ -12,8 +14,14 @@
     <th>Semester</th>
     <th>Teacher</th>
     <th>Department</th>
+    <%if signed_in? and current_user.role == 'student'  %>
+    <th>Status</th>
+      <%end %>
+    <%if current_user.role == 'admin' or !current_user.department_head_department.nil? %>
     <th>Edit</th>
     <th>Delete</th>
+      <th>View</th>
+      <%end %>
   </tr>
   </thead>
 <tbody>
@@ -25,12 +33,29 @@
     <td><%=course[:semester] %></td>
     <td><%=course.teacher.name %></td>
     <td><%=course.department.department_name %></td>
+
+    <% if signed_in? and current_user.role == 'student' and !(@mycourses.include?course) %>
+    <td><a href="<%=enroll_course_path(course) %>">
+      <input type="button" class="btn btn-outline-success" value="Enroll" />
+    </a></td>
+      <%elsif signed_in? and current_user.role == 'student'  %>
+
+    <td><a href="<%=unenroll_course_path(course) %>">
+      <input type="button" class="btn btn-outline-warning" value="Un-enroll" />
+    </a></td>
+      <%end %>
+    <%if current_user.role == 'admin' or (!current_user.department_head_department.nil? and course.department == current_user.department_head_department) %>
     <td><a href="<%=show_courses_path(course) %>">
       <input type="button" class="btn btn-outline-info" value="Edit" />
     </a></td>
     <td><a href="<%=delete_courses_path(course) %>">
       <input type="button" class="btn btn-outline-danger" value="Delete" />
     </a></td>
+
+      <td><a href="<%=mycourse_details_path(course) %>">
+        <input type="button" class="btn btn-outline-primary" value="View" />
+      </a></td>
+      <%end %>
   </tr>
 <% end %>
 </tbody>

@@ -1,10 +1,17 @@
 <h1><%=@department.department_name %> Department</h1>
-
 <br/>
+
 
 <form action="<%=department_head_update_path %>" method="post">
   <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
-  <select id="teacher" class="custom-select custom-select-lg mb-3" name="department_head_id" >
+  <label for="departmenHead">Department Head: </label>
+  <select id="departmenHead"
+          class="custom-select custom-select-lg mb-3"
+          name="department_head_id"
+          <%if current_user.role != 'admin'%>
+          disabled
+          <%end %>
+  >
     <% @teachers.each do |teacher| %>
 
       <%if ! @department.department_head.nil? and teacher.id == @department.department_head.id %>
@@ -16,42 +23,12 @@
     <% end %>
   </select>
   <input type="text" name="department_id" value="<%=@department.id %>" hidden>
+  <%if current_user.role == 'admin' %>
   <input type="submit">
+    <%end %>
 </form>
 
 <br/>
-<h3> Students List</h3>
-<% if @students.count <1 %>
-  <h4>No students available!</h4>
-<%else%>
-<table class="table table-hover">
-  <thead>
-  <tr>
-    <th>Name</th>
-    <th>email</th>
-    <th>phone</th>
-    <th>address</th>
-  </tr>
-
-  </thead>
-
-  <tbody>
-  <% @students.each do |student| %>
-  <tr>
-    <td><%=student.name %></td>
-    <td><%=student.email %></td>
-    <td><%=student.phone %></td>
-    <td><%=student.address %></td>
-  </tr>
-
-  <% end %>
-  </tbody>
-</table>
-<%end %>
-
-
-<br/>
-
 <h3> teachers List</h3>
 <%if @teachers.count < 1 %>
   <h4> Teachers not available</h4>
@@ -74,11 +51,15 @@
     <td><%=teacher.email %></td>
     <td><%=teacher.phone %></td>
     <td><%=teacher.address %></td>
+    <td><a href="<%=show_teacher_path(teacher) %>">
+      <input type="button" class="btn btn-outline-info" value="View" />
+    </a></td>
   </tr>
   <% end %>
   </tbody>
 </table>
 <%  end %>
+
 <br/>
 <h3> Course List </h3>
 <%if @courses.count < 1%>
@@ -93,8 +74,10 @@
       <th>Semester</th>
       <th>Teacher</th>
       <th>Department</th>
+      <% if current_user.role == 'admin' or (!current_user.department_head_department.nil? and current_user.department_head_department_id == @department.id ) %>
       <th>Edit</th>
       <th>Delete</th>
+        <%end %>
     </tr>
     </thead>
     <tbody>
@@ -106,14 +89,49 @@
         <td><%=course[:semester] %></td>
         <td><%=course.teacher.name %></td>
         <td><%=course.department.department_name %></td>
-        <td><a href="<%=show_courses_department_path(course,@department) %>">
+        <% if current_user.role == 'admin' or (!current_user.department_head_department.nil? and current_user.department_head_department_id == @department.id ) %>
+      <td><a href="<%=show_courses_department_path(course,@department) %>">
           <input type="button" class="btn btn-outline-info" value="Edit" />
         </a></td>
         <td><a href="<%=delete_courses_from_department_path(course,@department) %>">
           <input type="button" class="btn btn-outline-danger" value="Delete" />
         </a></td>
+          <%end %>
       </tr>
     <% end %>
     </tbody>
   </table>
 <%end %>
+
+<br/>
+<h3> Students List</h3>
+<% if @students.count <1 %>
+  <h4>No students available!</h4>
+<%else%>
+  <table class="table table-hover">
+    <thead>
+    <tr>
+      <th>Name</th>
+      <th>email</th>
+      <th>phone</th>
+      <th>address</th>
+    </tr>
+
+    </thead>
+
+    <tbody>
+    <% @students.each do |student| %>
+      <tr>
+        <td><%=student.name %></td>
+        <td><%=student.email %></td>
+        <td><%=student.phone %></td>
+        <td><%=student.address %></td>
+      </tr>
+
+    <% end %>
+    </tbody>
+  </table>
+<%end %>
+
+
+<br/>

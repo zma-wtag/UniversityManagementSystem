@@ -8,6 +8,7 @@ Rails.application.routes.draw do
       only: [:edit, :update]
   end
 
+
   get "/sign_in" => "clearance/sessions#new", as: "sign_in"
   delete "/sign_out" => "clearance/sessions#destroy", as: "sign_out"
   get "/create_student/" => "users#new", as: "create_student"
@@ -37,6 +38,7 @@ Rails.application.routes.draw do
   post 'course/:id/update/:dptid', to: 'courses#edit_from_department', as: 'update_courses_from_department'
   get 'course/:id/department/:dptid', to: 'courses#show_from_department', as: 'show_courses_department'
   get 'course/:id/delete/department/:dptid', to: 'courses#destroy_from_department', as: 'delete_courses_from_department'
+  get 'teacher/:id/view', to: 'departments#show_teacher', as: 'show_teacher'
 
   # Users
 
@@ -44,5 +46,17 @@ Rails.application.routes.draw do
   get '/edit', to: 'users#edit', as: 'profile_edit_page'
   post '/edit', to: 'users#update', as: 'profile_update'
   post 'departmenthead', to: 'users#departmentHeadUpdate', as: 'department_head_update'
+  get '/users', to: 'users#users_list', as: 'users_list'
+  get '/user/:id', to: 'users#edit_user_admin', as: 'edit_user_admin'
+  post '/user/:id', to: 'users#update_user_admin', as: 'update_user_admin'
+  get 'mycourses', to: 'users#mycourses' , as:'mycourses'
+  get 'mycourse/:id/details' , to: 'users#mycourse_details' , as: 'mycourse_details'
+  get 'courses/user/:id', to: 'users#courses_view_admin', as: 'courses_list_user'
 
+  # enroll course
+  get 'enroll/:id', to: 'users#enroll_course', as: 'enroll_course'
+  get 'unenroll/:id', to: 'users#unenroll_course', as: 'unenroll_course'
+  get 'unenroll/byadmin/:id', to: 'users#unenroll_by_admin', as: 'unenroll_by_admin'
+  #add GPA
+  post 'addgpa/:id', to: 'users#addgpa', as: 'add_gpa'
 end

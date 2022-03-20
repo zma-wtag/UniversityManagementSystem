@@ -1,0 +1,37 @@
+<h2><%=@teacher.name %></h2>
+<h5>Email: <%=@teacher.email %></h5>
+<h5>Phone: <%=@teacher.phone %></h5>
+<h5>Department: <%=@teacher.teacher_department.department_name %></h5>
+<h5>Address: <%=@teacher.address %></h5>
+
+
+<br/>
+<h3> Course List </h3>
+<%if @courses.count < 1%>
+  <h4>No Courses available!</h4>
+<%else %>
+  <table class="table table-hover">
+    <thead>
+    <tr>
+      <th>Course code</th>
+      <th>Course Title</th>
+      <th>Course Credit</th>
+      <th>Semester</th>
+      <th>Teacher</th>
+      <th>Department</th>
+
+    </tr>
+    </thead>
+    <tbody>
+    <% @courses.each do |course| %>
+      <tr>
+        <td><%=course[:course_code] %></td>
+        <td><%=course[:course_title] %></td>
+        <td><%=course[:course_credit] %></td>
+        <td><%=course[:semester] %></td>
+        <td><%=course.teacher.name %></td>
+        <td><%=course.department.department_name %></td>
+    <% end %>
+    </tbody>
+  </table>
+<%end %>

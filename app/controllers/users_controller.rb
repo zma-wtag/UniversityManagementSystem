@@ -4,7 +4,7 @@ class UsersController < Clearance::UsersController
   end
 
   def edit
-    @role = "teacher"
+    @role = current_user.role
     @departments = Department.all
     @user = current_user
     # @role = 'student'
@@ -24,14 +24,46 @@ class UsersController < Clearance::UsersController
     # render json: @role
     if @role =='student'
       @create_user_params = student_params
+      # @create_user_params.teacher_department=nil
 
     elsif @role =='teacher'
       @create_user_params = teacher_params
+      # @create_user_params.student_department=nil
+
+    elsif @role =='department_head'
+      @create_user_params = department_head_params
+      # @create_user_params.student_department=nil
     end
-    if current_user.update(student_params)
+    if current_user.update(@create_user_params)
       redirect_to profile_path, notice: 'Profile Updated !!'
     else
       redirect_to profile_path, notice: 'Profile Update failed!!'
+    end
+  end
+
+
+  def update_user_admin
+    @user = User.find(params[:id])
+    @create_user_params=nil
+    @prevrole = @user.role
+    @role = params[:user][:role]
+    # render json: @role
+    if @role =='student'
+      @create_user_params = student_params
+      # render json: @create_user_params
+      @create_user_params[@role+'_department_id']= params[:user][@prevrole+'_department_id']
+      @create_user_params[@prevrole+'_department_id'] = nil
+
+    elsif @role =='teacher'
+      @create_user_params = teacher_params
+      @create_user_params[@role+'_department_id']= params[:user][@prevrole+'_department_id']
+      @create_user_params[@prevrole+'_department_id'] = nil
+      # render json: @create_user_params
+    end
+    if @user.update(@create_user_params)
+      redirect_to users_list_path, notice: 'User Updated !!'
+    else
+      redirect_to users_list_path, notice: 'User Update failed!!'
     end
   end
 
@@ -42,12 +74,16 @@ class UsersController < Clearance::UsersController
       @role = 'teacher'
     end
     @user = user_from_params
-    departments = Department.all
-    info =[]
-    departments.each do |department|
-      info.append([department.department_name,department.id])
+    if current_user.role == 'admin'
+      departments = Department.all
+      info =[]
+      departments.each do |department|
+        info.append([department.department_name,department.id])
+      end
+      @departments = info
+    else
+      @departments = [[current_user.department_head_department.department_name,current_user.department_head_department.id]]
     end
-    @departments = info
     render template: "users/new"
   end
 
@@ -82,6 +118,7 @@ class UsersController < Clearance::UsersController
       user.name = name
       user.phone = phone
       user.address = address
+      user.role = @role
       if !user.email.nil?
         if @role == "student"
           user.student_department = Department.find(student_department)
@@ -98,27 +135,112 @@ class UsersController < Clearance::UsersController
     #
     @user = User.find(params[:department_head_id])
     if !@department.department_head.nil?
-      @department.department_head.update({ :department_head_department_id=> nil })
+      @department.department_head.update({ :department_head_department_id=> nil , role:'teacher' })
     end
-    if @user.update({ :department_head_department_id=> @department.id })
+    if @user.update({ :department_head_department_id=> @department.id, role:'department_head' })
       redirect_to show_department_path(@department), notice: 'Department head updated'
     else
       redirect_to show_department_path(@department), notice: 'Department head update Failed!!'
     end
   end
 
+  def users_list
+    if current_user.role== 'admin'
+      @users = User.all
+    else
+      @teachers = User.where(teacher_department_id:current_user.department_head_department_id)
+      @students = User.where(student_department_id:current_user.department_head_department_id)
+      @users = @teachers+@students
+      @users.delete(current_user)
+    end
+  end
+
+  def edit_user_admin
+    @user = User.find(params[:id])
+    @role = @user.role
+    @departments = Department.all
+    @roles = User.roles.keys - ['admin', 'department_head']
+    # render json: @roles
+    # render json:  @roles.first[0]
+    render 'users/edit'
+  end
+
+  def enroll_course
+    @course = Course.find(params[:id])
+    if current_user.student_courses << @course
+      redirect_to courses_path , notice: 'Enrolled'
+    else
+      redirect_to courses_path , notice: 'Enrollment failed'
+    end
+  end
+
+  def unenroll_course
+    @takencourse = current_user.taken_courses.where(course_id: params[:id]).first
+    if TakenCourse.destroy(@takencourse.id)
+      redirect_to courses_path , notice: 'Un-Enrolled'
+    else
+      redirect_to courses_path , notice: 'Un-Enrollment failed'
+    end
+  end
+  def unenroll_by_admin
+    @takencourse = TakenCourse.find(params[:id])
+    if TakenCourse.destroy(@takencourse.id)
+      redirect_to courses_path , notice: 'Un-Enrolled'
+    else
+      redirect_to courses_path , notice: 'Un-Enrollment failed'
+    end
+  end
+
+  def mycourses
+    if current_user.role == 'student'
+      @courses = current_user.student_courses
+    else
+      @courses=current_user.teacher_courses
+    end
+  end
+  def courses_view_admin
+    @user = User.find(params[:id])
+    if @user.role == 'student'
+      @courses = @user.student_courses
+    else
+      @courses= @user.teacher_courses
+    end
+
+    # render json: @courses
+
+    render 'mycourses'
+  end
+
+  def addgpa
+    @takencourse = TakenCourse.find(params[:id])
+    @course = @takencourse.course
+    @gpa = params[:gpa].to_f
+    if @takencourse.update(gpa:@gpa)
+      redirect_to mycourse_details_path(@course), notice: 'GPA Updated'
+    else
+      redirect_to mycourse_details_path(@course), notice: 'GPA Update Failed!'
+    end
+  end
+
+  def mycourse_details
+    # render json: current_user
+    @course = Course.find(params[:id])
+    @gradeList = TakenCourse.gpas
+  end
   private
+  def redirect_signed_in_users
+    #only for overriding
+  end
   def student_params
-    params.require(:user).permit(:name, :email, :phone, :address, :student_department_id)
+    params.require(:user).permit(:name, :email, :phone, :address, :student_department_id, :role)
   end
 
   def teacher_params
-    params.require(:user).permit(:name, :email, :phone, :address, :teacher_department_id)
+    params.require(:user).permit(:name, :email, :phone, :address, :teacher_department_id, :role)
   end
 
   def department_head_params
-    params.require(:user).permit(:department_head_department_id)
+    params.require(:user).permit(:name, :email, :phone, :address, :teacher_department_id, :role)
   end
-
 
 end

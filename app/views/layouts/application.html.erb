@@ -15,17 +15,23 @@
   </head>
 
   <body>
-
-  <%= render partial: 'layouts/navbar' %>
-  <div class="container">
-    <%flash.each do |key,value| %>
-      <div class="alert alert-secondary" role="alert">
-        <%=value %>
-      </div>
+  <div class="app-container">
+    <%if signed_in? %>
+      <%= render partial: 'layouts/navbar' %>
     <%end %>
-    <%= yield %>
-  </div>
+    <div class="main-container">
+      <%if !signed_in? %>
+        <h1>University Management System</h1>
+      <%end %>
+      <%flash.each do |key,value| %>
+        <div class="alert alert-secondary" role="alert">
+          <%=value %>
+        </div>
+      <%end %>
+      <%= yield %>
+    </div>
 
+  </div>
   </body>
 
 </html>

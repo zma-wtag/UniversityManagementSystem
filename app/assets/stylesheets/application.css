@@ -49,3 +49,34 @@
 .card button:hover, a:hover {
     opacity: 0.7;
 }
+
+#gpaform{
+    display: flex;
+}
+
+#gpa_input{
+    margin-right: 10px;
+}
+
+.main-container{
+    display: flex;
+    flex-direction: column;
+    /*justify-content: center;*/
+    align-items: center;
+    height: 100vh;
+    /*margin-top: 36px;*/
+    width: 95%;
+    margin-left: 5%;
+
+}
+
+.sign-in{
+    margin: 10%;
+    padding: 20px 25px;
+    border: 1px solid black;
+    border-radius: 5px;
+}
+
+.nav-userinfo{
+    display: flex;
+}
