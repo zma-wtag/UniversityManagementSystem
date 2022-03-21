@@ -226,6 +226,7 @@ class UsersController < Clearance::UsersController
     # render json: current_user
     @course = Course.find(params[:id])
     @gradeList = TakenCourse.gpas
+    # render json: @course.taken_courses
   end
   private
   def redirect_signed_in_users

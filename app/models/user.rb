@@ -11,4 +11,10 @@ class User < ApplicationRecord
   has_many :teacher_courses, class_name: 'Course', foreign_key: 'teacher_id', inverse_of: :teacher
 
   enum role: %i(student teacher department_head admin)
+
+  validates :name , presence: true
+  validates :email, presence: true
+  validates :address, presence: true
+  validates :phone , presence: true
+  validates :role , presence: true
 end
