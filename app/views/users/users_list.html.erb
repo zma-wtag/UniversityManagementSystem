@@ -27,8 +27,10 @@
         <td><%=user.address %></td>
         <%if user.role == 'student' %>
           <td><%=user.student_department.department_name %></td>
-        <%elsif user.role == 'teacher' or user.role == 'department_head'%>
+        <%elsif user.role == 'teacher' %>
           <td><%=user.teacher_department.department_name %></td>
+          <%else %>
+          <td><%=user.department_head_department.department_name %></td>
       <%end %>
         <td><%=user.role %></td>
         <td><a href="<%=edit_user_admin_path(user) %>">

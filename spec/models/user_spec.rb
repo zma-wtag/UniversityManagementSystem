@@ -2,51 +2,54 @@ require 'rails_helper'
 
 RSpec.describe User, type: :model do
   context 'validation tests' do
-
+    let (:student) {build(:student)}
+    let (:teacher) {build(:teacher)}
+    let (:department_head) {build(:department_head)}
     it 'Ensure name presence' do
-      user = User.new(email:'test@gmail.com',password:'123456',phone:'+880182234234', address:'Dhaka').save
-      expect(user).to eq(false )
+      student.name = nil
+      expect(student.save).to eq(false )
     end
 
     it 'Ensure email presence' do
-      user = User.new(name:'test',password:'123456',phone:'+880182234234', address:'Dhaka').save
-      expect(user).to eq(false )
+      teacher.email = nil
+      expect(teacher.save).to eq(false )
     end
 
     it 'Ensure Phone presence' do
-      user = User.new(name:'test', email:'test@gmail.com',password:'123456', address:'Dhaka').save
-      expect(user).to eq(false )
+      department_head.phone = nil
+      expect(department_head.save).to eq(false)
     end
 
     it 'Ensure address presence' do
-      user = User.new(name:'test', email:'test@gmail.com',password:'123456',phone:'+880182234234').save
-      expect(user).to eq(false )
+      teacher.address = nil
+      expect(teacher.save).to eq(false)
     end
 
     it 'Ensure Unique Email' do
-      user1 = User.new(name:'test', email:'test@gmail.com',password:'123456',phone:'+880182234234', address:'Dhaka').save
-      user2 = User.new(name:'test', email:'test@gmail.com',password:'123456',phone:'+880182234234', address:'Dhaka').save
-      expect(user1).to eq(true) and expect(user2).to eq(false)
+      user1 = student
+      user2 = teacher
+      user2.email = user1.email
+      expect(user1.save).to eq(true) and expect(user2.save).to eq(false)
     end
 
 
     it 'Ensure saved successfully' do
-      user = User.new(name:'test', email:'test@gmail.com',password:'123456',phone:'+880182234234', address:'Dhaka').save
-      expect(user).to eq(true)
+      expect(student.save).to eq(true)
     end
 
   end
 
   context 'checking different roled users' do
-    let (:params) {{name:'test',password:'123456',phone:'+880182234234', address:'Dhaka'}}
 
     before(:each) do
-      User.new(params.merge(email:'test1@gmail.com')).save
-      User.new(params.merge(email:'test2@gmail.com')).save
-      User.new(params.merge(email:'test3@gmail.com',role:'teacher')).save
-      User.new(params.merge(email:'test4@gmail.com',role:'department_head')).save
-      User.new(params.merge(email:'test5@gmail.com',role:'department_head')).save
-      User.new(params.merge(email:'test6@gmail.com',role:'admin')).save
+      FactoryBot.create(:student)
+      FactoryBot.create(:student)
+      FactoryBot.create(:teacher)
+      FactoryBot.create(:department_head)
+      FactoryBot.create(:department_head)
+      admin = FactoryBot.build(:teacher)
+      admin.role = 'admin'
+      admin.save
     end
     it 'should return user who are student' do
       expect(User.where(role:'student').size).to eq(2)
@@ -68,11 +71,11 @@ RSpec.describe User, type: :model do
   end
 
   context 'checking Students and Teachers course funcionality' do
-    department = Department.create!(department_name:'testDepartment')
     before(:each) do
-      @teacher = User.create!(name:'testTeacher',password:'test123',address:'test', teacher_department:department,role:'teacher',email:'testTeacher@gmail.com',phone:'+8801829723433')
-      @student = User.create!(name:'testStudent',password:'test123',address:'test', student_department:department,role:'student',email:'testStudent@gmail.com',phone:'+8801829723433')
-      @course = Course.create!(course_code:'t01',course_title:'testCourse',course_credit:3.3,teacher:@teacher,department:department,semester:'test')
+      @department = FactoryBot.create(:department)
+      @teacher = User.create!(name:'testTeacher',password:'test123',address:'test', teacher_department:@department,role:'teacher',email:'testTeacher@gmail.com',phone:'+8801829723433')
+      @student = User.create!(name:'testStudent',password:'test123',address:'test', student_department:@department,role:'student',email:'testStudent@gmail.com',phone:'+8801829723433')
+      @course = Course.create!(course_code:'t01',course_title:'testCourse',course_credit:3.3,teacher:@teacher,department:@department,semester:'test')
     end
 
     it 'should return Student taken course' do

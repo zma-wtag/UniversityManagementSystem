@@ -1,4 +1,6 @@
 class UsersController < Clearance::UsersController
+  before_action :create, :only => [:new, :create]
+  load_and_authorize_resource
   def index
     @user = current_user
   end
@@ -47,24 +49,29 @@ class UsersController < Clearance::UsersController
     @create_user_params=nil
     @prevrole = @user.role
     @role = params[:user][:role]
-    # render json: @role
-    if @role =='student'
-      @create_user_params = student_params
-      # render json: @create_user_params
-      @create_user_params[@role+'_department_id']= params[:user][@prevrole+'_department_id']
-      @create_user_params[@prevrole+'_department_id'] = nil
+    if current_user.role == 'admin' or (current_user.role == 'department_head' and (@user.student_department == current_user.department_head_department or @user.teacher_department == current_user.department_head_department))
+      if @role =='student'
+        @create_user_params = student_params
+        # render json: @create_user_params
+        @create_user_params[@role+'_department_id']= params[:user][@prevrole+'_department_id']
+        @create_user_params[@prevrole+'_department_id'] = nil
 
-    elsif @role =='teacher'
-      @create_user_params = teacher_params
-      @create_user_params[@role+'_department_id']= params[:user][@prevrole+'_department_id']
-      @create_user_params[@prevrole+'_department_id'] = nil
-      # render json: @create_user_params
-    end
-    if @user.update(@create_user_params)
-      redirect_to users_list_path, notice: 'User Updated !!'
+      elsif @role =='teacher'
+        @create_user_params = teacher_params
+        @create_user_params[@role+'_department_id']= params[:user][@prevrole+'_department_id']
+        @create_user_params[@prevrole+'_department_id'] = nil
+        # render json: @create_user_params
+      end
+      if @user.update(@create_user_params)
+        redirect_to users_list_path, notice: 'User Updated !!'
+      else
+        redirect_to users_list_path, notice: 'User Update failed!!'
+      end
     else
-      redirect_to users_list_path, notice: 'User Update failed!!'
+      redirect_to root_path, notice: 'not Authorized'
     end
+    # render json: @role
+
   end
 
   def new
@@ -91,6 +98,7 @@ class UsersController < Clearance::UsersController
   def create
     # render json: params
     @role = user_params.delete(:role)
+    # render json: user_params
     @user = user_from_params
     if @user.save
       redirect_to root_path, notice: "user created"
@@ -155,14 +163,25 @@ class UsersController < Clearance::UsersController
     end
   end
 
-  def edit_user_admin
+  def edit_user_admin_and_department_head
     @user = User.find(params[:id])
     @role = @user.role
-    @departments = Department.all
     @roles = User.roles.keys - ['admin', 'department_head']
+    if current_user.role == 'department_head'
+      if (@user.role == 'student' and @user.student_department!=current_user.department_head_department) or ((@user.role == 'teacher' or @user.role=='department_head') and current_user.department_head_department != @user.teacher_department)
+        redirect_to users_list_path, notice: 'not Authorized'
+      else
+        @departments = Department.where(id:current_user.department_head_department_id)
+        render 'users/edit'
+      end
+    else
+      @departments = Department.all
+      render 'users/edit'
+    end
+
     # render json: @roles
     # render json:  @roles.first[0]
-    render 'users/edit'
+
   end
 
   def enroll_course
@@ -228,7 +247,7 @@ class UsersController < Clearance::UsersController
     @gradeList = TakenCourse.gpas
     # render json: @course.taken_courses
   end
-  private
+  # private
   def redirect_signed_in_users
     #only for overriding
   end

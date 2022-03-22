@@ -47,10 +47,10 @@ Rails.application.routes.draw do
   post '/edit', to: 'users#update', as: 'profile_update'
   post 'departmenthead', to: 'users#departmentHeadUpdate', as: 'department_head_update'
   get '/users', to: 'users#users_list', as: 'users_list'
-  get '/user/:id', to: 'users#edit_user_admin', as: 'edit_user_admin'
+  get '/user/:id', to: 'users#edit_user_admin_and_department_head', as: 'edit_user_admin'
   post '/user/:id', to: 'users#update_user_admin', as: 'update_user_admin'
   get 'mycourses', to: 'users#mycourses' , as:'mycourses'
-  get 'mycourse/:id/details' , to: 'users#mycourse_details' , as: 'mycourse_details'
+  get 'mycourse/:course_id/details' , to: 'users#mycourse_details' , as: 'mycourse_details'
   get 'courses/user/:id', to: 'users#courses_view_admin', as: 'courses_list_user'
 
   # enroll course

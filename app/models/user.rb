@@ -1,6 +1,5 @@
 class User < ApplicationRecord
   include Clearance::User
-
   belongs_to :department_head_department ,class_name: 'Department', inverse_of: 'department_head', optional: true
   # Student
   belongs_to :student_department ,class_name: 'Department', inverse_of: 'students' ,optional: true
@@ -17,4 +16,8 @@ class User < ApplicationRecord
   validates :address, presence: true
   validates :phone , presence: true
   validates :role , presence: true
+  validates_plausible_phone :phone, presence: true
+  validates :email, presence: true, 'valid_email_2/email': { message: 'Invalid email provided' }
+  private
+
 end

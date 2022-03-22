@@ -71,7 +71,12 @@ group :test do
   gem "capybara"
   gem "selenium-webdriver"
   gem "webdrivers"
+  gem "factory_bot_rails"
+  gem "faker"
 end
 
 gem 'dotenv-rails', groups: [:development, :test]
 gem "clearance"
+gem "phony_rails"
+gem "valid_email2"
+gem 'cancancan'

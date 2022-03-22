@@ -4,5 +4,5 @@ class Department < ApplicationRecord
   has_many  :teachers, class_name: 'User', inverse_of: 'teacher_department',foreign_key: 'teacher_department_id'
   has_many  :courses
 
-  validates :department_name , presence: true
+  validates :department_name, presence: true
 end

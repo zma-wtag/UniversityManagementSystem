@@ -1,4 +1,5 @@
 class CoursesController < ApplicationController
+  load_and_authorize_resource
   def index
     @courses = Course.all
     if signed_in? and current_user.role =='student'
@@ -24,8 +25,10 @@ class CoursesController < ApplicationController
   def create
     # render json: params[:course]
     @course = Course.new(course_params)
+    if current_user.role == 'department_head' and @course.department != current_user.department_head_department
+      redirect_to create_courses_path, notice: 'not Authorized!!'
     # render json: @course
-    if @course.save
+    elsif @course.save
       redirect_to courses_path , :notice => 'Your course was saved'
     else
       render "new"
@@ -34,7 +37,9 @@ class CoursesController < ApplicationController
 
   def edit
     @course = Course.find(params[:id])
-    if @course.update(course_params)
+    if current_user.role == 'department_head' and @course.department != current_user.department_head_department
+      redirect_to courses_path, notice: 'not Authorized!!'
+    elsif @course.update(course_params)
       redirect_to courses_path, notice:'Changes Saved!'
     else
       redirect_to courses_path, notice: 'Failed to save Changes!!'
@@ -44,7 +49,9 @@ class CoursesController < ApplicationController
 
   def edit_from_department
     @course = Course.find(params[:id])
-    if @course.update(course_params)
+    if current_user.role == 'department_head' and @course.department != current_user.department_head_department
+      redirect_to show_department_path(params[:dptid]), notice: 'not Authorized!!'
+      elsif @course.update(course_params)
       redirect_to show_department_path(params[:dptid]), notice: 'Course Updated'
     else
       redirect_to show_department_path(params[:dptid]), notice: 'Failed to save Changes!!'
@@ -73,7 +80,9 @@ class CoursesController < ApplicationController
 
   def destroy_from_department
     @course = Course.find(params[:id])
-    if @course.destroy
+    if current_user.role == 'department_head' and @course.department != current_user.department_head_department
+      redirect_to show_department_path(params[:dptid]), notice: 'not Authorized!!'
+    elsif @course.destroy
       redirect_to show_department_path(params[:dptid]), notice: 'Course Deleted!'
     else
       redirect_to show_department_path(params[:dptid]), notice: 'Course Delete failed !!'
@@ -82,12 +91,15 @@ class CoursesController < ApplicationController
 
   def destroy
     @course = Course.find(params[:id])
-    if @course.destroy
+    if current_user.role == 'department_head' and @course.department != current_user.department_head_department
+      redirect_to courses_path, notice: 'not Authorized!!'
+    elsif @course.destroy
       redirect_to courses_path, notice: 'Course Deleted!'
     else
       redirect_to courses_path, notice: 'Course Delete failed !!'
     end
   end
+
   private
 
   def course_params
