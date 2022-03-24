@@ -49,13 +49,18 @@
       <% if current_user.name.nil? %>
         <a class="nav-link" href="<%=profile_path%>">Complete Profile</a>
       <%else %>
-        <a class="nav-link" href="<%=profile_path%>"><%=current_user.name %></a>
+        <div class="dropdown">
+          <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <%=current_user.name.capitalize%>
+          </button>
+          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            <a class="dropdown-item" href="<%=profile_path %>">Profile</a>
+            <%= button_to 'Sign out', sign_out_path, method: :delete , class:'dropdown-item text-danger' %>
+          </div>
+        </div>
       <%end %>
-
-      <%= button_to 'Sign out', sign_out_path, method: :delete %>
     <%else %>
       <a class="nav-link" href="<%=sign_in_path%>">Sign in</a>
     <%end %>
   </div>
-
 </nav>

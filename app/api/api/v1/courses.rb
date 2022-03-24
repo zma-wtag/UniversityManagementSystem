@@ -30,8 +30,26 @@ module V1
             requires :department_id, type: Integer
           end
           post do
-            Course.create!({course_title: params[:course_title], course_code: params[:course_code], semester: params[:semseter], course_credit: params[:course_credit].to_f, semester: params[:semester], department_id:params[:department_id], teacher_id:params[:teacher_id]})
-            end
+            Course.create!({course_title: params[:course_title], course_code: params[:course_code], semester: params[:semseter], course_credit: params[:course_credit].to_f, department_id:params[:department_id], teacher_id:params[:teacher_id]})
+          end
+
+        desc 'Delete a course'
+        route_param :id do
+        delete do
+          Course.find(params[:id]).destroy
+          end
+        end
+
+        desc 'Update a course'
+        params do
+          requires :id, type: Integer
+        end
+        put do
+          puts params
+          Course.find(params[:id]).update(params)
+          # Course.create!({course_title: params[:course_title], course_code: params[:course_code], semester: params[:semseter], course_credit: params[:course_credit].to_f, department_id:params[:department_id], teacher_id:params[:teacher_id]})
+        end
+
       end
     end
 end

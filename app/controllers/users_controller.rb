@@ -6,6 +6,9 @@ class UsersController < Clearance::UsersController
   end
 
   def edit
+    if current_user.role == 'admin'
+      redirect_to profile_path, notice: "admin can't update your profile"
+    end
     @role = current_user.role
     @departments = Department.all
     @user = current_user

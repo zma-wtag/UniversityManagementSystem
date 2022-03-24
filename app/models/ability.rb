@@ -6,6 +6,7 @@ class Ability
   def initialize(user)
     if user.role == 'admin'
       can :manage, :all
+      cannot :edit, User
     end
 
     if user.role == 'department_head' or user.role == 'student'

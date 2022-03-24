@@ -80,3 +80,8 @@
 .nav-userinfo{
     display: flex;
 }
+
+.app-container{
+    width: 95%;
+    margin-left: 2.5%;
+}

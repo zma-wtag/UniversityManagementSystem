@@ -17,6 +17,41 @@ module V1
         present user, with: V1::Entities::User
       end
     end
+
+      desc 'Create a User'
+      params do
+        requires :name, type: String
+        requires :email, type: String
+        requires :password, type: String
+        requires :phone, type: String
+        requires :address, type: String
+        requires :role, type: String
+      end
+      post do
+        puts params
+        User.create!(params)
+      end
+
+
+      desc 'Delete a User'
+      route_param :id do
+        delete do
+          User.find(params[:id]).destroy
+        end
+      end
+
+      desc 'Update a User'
+      params do
+        requires :id, type: Integer
+      end
+      put do
+        puts params
+        User.find(params[:id]).update(params)
+        # Course.create!({course_title: params[:course_title], course_code: params[:course_code], semester: params[:semseter], course_credit: params[:course_credit].to_f, department_id:params[:department_id], teacher_id:params[:teacher_id]})
+      end
+
+
+
     end
   end
 end
