@@ -2,8 +2,8 @@ require 'rails_helper'
 
 RSpec.describe User, type: :model do
   context 'validation tests' do
-    let (:student) {build(:student)}
-    let (:teacher) {build(:teacher)}
+    let (:student) {factoryBot.build(:student)}
+    let (:teacher) {factoryBot.build(:teacher)}
     let (:department_head) {build(:department_head)}
     it 'Ensure name presence' do
       student.name = nil

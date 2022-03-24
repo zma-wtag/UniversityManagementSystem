@@ -1,5 +1,5 @@
 class UsersController < Clearance::UsersController
-  before_action :create, :only => [:new, :create]
+  before_action :create, :only => [:create]
   load_and_authorize_resource
   def index
     @user = current_user
@@ -18,6 +18,15 @@ class UsersController < Clearance::UsersController
     # end
     # @departments = info
 
+  end
+
+  def destroy
+    @user = User.find(params[:id])
+    if @user.destroy()
+      redirect_to users_list_path, notice: 'user deleted'
+    else
+      redirect_to users_list_path, notice: 'user delete failed!'
+    end
   end
 
   def update
@@ -54,14 +63,23 @@ class UsersController < Clearance::UsersController
         @create_user_params = student_params
         # render json: @create_user_params
         @create_user_params[@role+'_department_id']= params[:user][@prevrole+'_department_id']
-        @create_user_params[@prevrole+'_department_id'] = nil
+        if @prevrole != @role
+          @create_user_params[@prevrole+'_department_id'] = nil
+        end
 
       elsif @role =='teacher'
         @create_user_params = teacher_params
         @create_user_params[@role+'_department_id']= params[:user][@prevrole+'_department_id']
-        @create_user_params[@prevrole+'_department_id'] = nil
+        if @prevrole != @role
+          if @prevrole != 'department_head'
+            @create_user_params[@prevrole+'_department_id'] = nil
+          else
+            @create_user_params[:role] = 'department_head'
+          end
+        end
         # render json: @create_user_params
       end
+      # render json: @create_user_params
       if @user.update(@create_user_params)
         redirect_to users_list_path, notice: 'User Updated !!'
       else
@@ -185,7 +203,7 @@ class UsersController < Clearance::UsersController
   end
 
   def enroll_course
-    @course = Course.find(params[:id])
+    @course = Course.find(params[:course_id])
     if current_user.student_courses << @course
       redirect_to courses_path , notice: 'Enrolled'
     else
@@ -194,15 +212,19 @@ class UsersController < Clearance::UsersController
   end
 
   def unenroll_course
-    @takencourse = current_user.taken_courses.where(course_id: params[:id]).first
+    @takencourse = current_user.taken_courses.where(course_id: params[:course_id]).first
+    if @takencourse.gpa.nil?
     if TakenCourse.destroy(@takencourse.id)
       redirect_to courses_path , notice: 'Un-Enrolled'
     else
       redirect_to courses_path , notice: 'Un-Enrollment failed'
     end
+    else
+      redirect_to mycourses_path, notice: 'not authorized'
+    end
   end
   def unenroll_by_admin
-    @takencourse = TakenCourse.find(params[:id])
+    @takencourse = TakenCourse.find(params[:course_id])
     if TakenCourse.destroy(@takencourse.id)
       redirect_to courses_path , notice: 'Un-Enrolled'
     else
@@ -231,7 +253,7 @@ class UsersController < Clearance::UsersController
   end
 
   def addgpa
-    @takencourse = TakenCourse.find(params[:id])
+    @takencourse = TakenCourse.find(params[:taken_course_id])
     @course = @takencourse.course
     @gpa = params[:gpa].to_f
     if @takencourse.update(gpa:@gpa)
@@ -243,7 +265,7 @@ class UsersController < Clearance::UsersController
 
   def mycourse_details
     # render json: current_user
-    @course = Course.find(params[:id])
+    @course = Course.find(params[:course_id])
     @gradeList = TakenCourse.gpas
     # render json: @course.taken_courses
   end

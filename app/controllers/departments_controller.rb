@@ -43,7 +43,7 @@ class DepartmentsController < ApplicationController
   end
 
   def show_teacher
-    @teacher = User.find(params[:id])
+    @teacher = User.find(params[:teacher_id])
     @courses = @teacher.teacher_courses
     render 'teacher_view'
   end

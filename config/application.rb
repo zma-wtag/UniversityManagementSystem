@@ -18,5 +18,9 @@ module UniversityManagement
     #
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
+    # config.paths.add File.join('app','api'), glob: File.join('**','*.rb')
+    # config.autload_paths+= Dir[Rails.root.join('app','api','*')]
+    config.paths.add File.join('app', 'api'), glob: File.join('**', '*.rb')
+    config.autoload_paths += Dir[Rails.root.join('app', 'api', '*')]
   end
 end

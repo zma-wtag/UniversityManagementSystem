@@ -13,6 +13,9 @@
       <th>Department</th>
       <th>Role</th>
       <th>Edit</th>
+      <%if current_user.role == 'admin' %>
+    <th>Delete</th>
+      <%end %>
     </tr>
 
     </thead>
@@ -35,6 +38,9 @@
         <td><%=user.role %></td>
         <td><a href="<%=edit_user_admin_path(user) %>">
           <input type="button" class="btn btn-outline-info" value="Edit" />
+        </a></td>
+        <td><a href="<%= delete_user_path(user) %>">
+          <input type="button" class="btn btn-danger" value="Delete" />
         </a></td>
         <td><a href="<%=courses_list_user_path(user) %>">
           <input type="button" class="btn btn-outline-dark" value="Courses" />

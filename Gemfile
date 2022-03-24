@@ -80,3 +80,6 @@ gem "clearance"
 gem "phony_rails"
 gem "valid_email2"
 gem 'cancancan'
+gem 'grape'
+gem 'grape_on_rails_routes'
+gem 'grape-entity'

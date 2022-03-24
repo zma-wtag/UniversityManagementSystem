@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  mount Base => '/'
   resources :passwords, controller: "clearance/passwords", only: [:create, :new]
   resource :session, controller: "clearance/sessions", only: [:create]
 
@@ -38,7 +39,7 @@ Rails.application.routes.draw do
   post 'course/:id/update/:dptid', to: 'courses#edit_from_department', as: 'update_courses_from_department'
   get 'course/:id/department/:dptid', to: 'courses#show_from_department', as: 'show_courses_department'
   get 'course/:id/delete/department/:dptid', to: 'courses#destroy_from_department', as: 'delete_courses_from_department'
-  get 'teacher/:id/view', to: 'departments#show_teacher', as: 'show_teacher'
+  get 'teacher/:teacher_id/view', to: 'departments#show_teacher', as: 'show_teacher'
 
   # Users
 
@@ -52,11 +53,12 @@ Rails.application.routes.draw do
   get 'mycourses', to: 'users#mycourses' , as:'mycourses'
   get 'mycourse/:course_id/details' , to: 'users#mycourse_details' , as: 'mycourse_details'
   get 'courses/user/:id', to: 'users#courses_view_admin', as: 'courses_list_user'
+  get 'delet/user/:id', to: 'users#destroy', as: 'delete_user'
 
   # enroll course
-  get 'enroll/:id', to: 'users#enroll_course', as: 'enroll_course'
-  get 'unenroll/:id', to: 'users#unenroll_course', as: 'unenroll_course'
-  get 'unenroll/byadmin/:id', to: 'users#unenroll_by_admin', as: 'unenroll_by_admin'
+  get 'enroll/:course_id', to: 'users#enroll_course', as: 'enroll_course'
+  get 'unenroll/:course_id', to: 'users#unenroll_course', as: 'unenroll_course'
+  get 'unenroll/byadmin/:course_id', to: 'users#unenroll_by_admin', as: 'unenroll_by_admin'
   #add GPA
-  post 'addgpa/:id', to: 'users#addgpa', as: 'add_gpa'
+  post 'addgpa/:taken_course_id', to: 'users#addgpa', as: 'add_gpa'
 end
