@@ -20,13 +20,14 @@ RSpec.describe "Courses", type: :request do
 
     it 'should create a new course' do
       newCourse = FactoryBot.build(:course)
+      @totalcourses = Course.all.count
       post create_courses_path, params:{course:{course_code:newCourse.course_code,course_title:newCourse.course_title, teacher_id:newCourse.teacher_id,department_id:newCourse.department_id, semester: newCourse.semester, course_credit:newCourse.course_credit}}
-      expect(Course.last.course_title).to eq(newCourse.course_title)
+      expect(Course.all.count).to eq(@totalcourses+1)
     end
 
     it 'should update a course' do
       post update_courses_path(@course3), params:{course:{course_title:'Test123'}}
-      expect(Course.last.course_code).to eq(@course3.course_code) and expect(Course.last.course_title).to eq('Test123')
+      expect(Course.find(@course3.id).course_code).to eq(@course3.course_code) and expect(Course.find(@course3.id).course_title).to eq('Test123')
     end
 
     it 'should delete a course' do
@@ -36,7 +37,7 @@ RSpec.describe "Courses", type: :request do
 
     it 'should update a course from department page' do
       post update_courses_from_department_path(@course3,@course3.department), params:{course:{course_title:'Test123'}}
-      expect(Course.last.course_code).to eq(@course3.course_code) and expect(Course.last.course_title).to eq('Test123')
+      expect(Course.find(@course3.id).course_code).to eq(@course3.course_code) and expect(Course.find(@course3.id).course_title).to eq('Test123')
     end
 
     it 'should delete a course from department page' do

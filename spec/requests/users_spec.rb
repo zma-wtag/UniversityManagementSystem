@@ -17,22 +17,24 @@ RSpec.describe "Users", type: :request do
       signedIn
       get users_path
       # puts response.status
-      expect(response.body).to include(@user.name)
+      expect(response.status).to eq(200)
     end
 
     it 'should create a new student' do
       signedIn
       @newUser = {"email":"adfawef@gmail.com","password":"123456","name":"student1","address":"Dhaka","phone":"+8801726234423","student_department":Department.last.id,role:'student'}
+      @totalUser = User.all.count
       post users_path, params:{user:@newUser}
-      expect(User.last.email).to eq(@newUser[:email])
+      expect(User.all.count).to eq(@totalUser+1)
     end
 
 
     it 'should create a new teacher' do
       signedIn
       @newUser = {"email":"adfawef@gmail.com","password":"123456","name":"teacher1","address":"Dhaka","phone":"+8801726234423","teacher_department":Department.last.id,role:'teacher'}
+      @totalTeacher = User.where.not(teacher_department:nil).count
       post users_path, params:{user:@newUser}
-      expect(User.last.email).to eq(@newUser[:email])
+      expect(User.where.not(teacher_department:nil).count).to eq(@totalTeacher+1)
     end
 
     it 'should assign Department Head' do

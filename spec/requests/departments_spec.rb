@@ -17,19 +17,20 @@ RSpec.describe "Departments", type: :request do
     end
 
     it 'should store a department in DB' do
+      @totalDepartment=Department.all.count
       post create_departments_path, params:{department:{department_name:'Testing Store'}}
-      expect(Department.last.department_name).to eq('Testing Store')
+      expect(Department.all.count).to eq(@totalDepartment+1)
     end
 
     it 'should destroy a department from DB' do
-      last_dept = Department.last
+      last_dept = Department.find(@department3.id)
       get destroy_department_path(@department3)
-      expect(last_dept).to eq(@department3) and expect(Department.last).not_to eq(@department3)
+      expect(last_dept).to eq(@department3) and expect(Department.all.ids).not_to include(last_dept.id)
     end
 
     it 'should update department name' do
       post update_department_path(@department3), params:{department:{department_name:'testing'}}
-      expect(Department.last.department_name).to eq('testing')
+      expect(Department.find(@department3.id).department_name).to eq('testing')
     end
 
   end

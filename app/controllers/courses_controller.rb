@@ -1,10 +1,12 @@
 class CoursesController < ApplicationController
   load_and_authorize_resource
   def index
-    @courses = Course.all
+    @q = Course.ransack(params[:q])
+    @courses = @q.result(distinct: true)
     if signed_in? and current_user.role =='student'
       @mycourses = current_user.student_courses
     end
+    # render json: @course
     # render json: @mycourses
     # @teachers = User.where.not(teacher_department_id:nil)
     # render json: @courses

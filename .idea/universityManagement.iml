@@ -55,6 +55,7 @@
     <orderEntry type="library" scope="PROVIDED" name="debug (v1.4.0, rbenv: 3.1.0) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="diff-lcs (v1.5.0, rbenv: 3.1.0) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="digest (v3.1.0, rbenv: 3.1.0) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="doorkeeper (v5.5.4, rbenv: 3.1.0) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="dotenv (v2.7.6, rbenv: 3.1.0) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="dotenv-rails (v2.7.6, rbenv: 3.1.0) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="dry-configurable (v0.14.0, rbenv: 3.1.0) [gem]" level="application" />
@@ -96,6 +97,7 @@
     <orderEntry type="library" scope="PROVIDED" name="nio4r (v2.5.8, rbenv: 3.1.0) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="nokogiri (v1.13.3, rbenv: 3.1.0) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="pg (v1.3.3, rbenv: 3.1.0) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="pgcrypto (v0.4.1, rbenv: 3.1.0) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="phony (v2.19.9, rbenv: 3.1.0) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="phony_rails (v0.15.0, rbenv: 3.1.0) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="public_suffix (v4.0.6, rbenv: 3.1.0) [gem]" level="application" />
@@ -142,13 +144,23 @@
         <option value="active_record:application_record" />
         <option value="active_record:multi_db" />
         <option value="application_record" />
+        <option value="base" />
         <option value="benchmark" />
+        <option value="cancan:ability" />
         <option value="channel" />
         <option value="clearance:install" />
         <option value="clearance:routes" />
         <option value="clearance:specs" />
         <option value="clearance:views" />
         <option value="controller" />
+        <option value="doorkeeper:application_owner" />
+        <option value="doorkeeper:confidential_applications" />
+        <option value="doorkeeper:enable_polymorphic_resource_owner" />
+        <option value="doorkeeper:install" />
+        <option value="doorkeeper:migration" />
+        <option value="doorkeeper:pkce" />
+        <option value="doorkeeper:previous_refresh_token" />
+        <option value="doorkeeper:views" />
         <option value="factory_bot:model" />
         <option value="generator" />
         <option value="helper" />
@@ -159,6 +171,8 @@
         <option value="mailer" />
         <option value="migration" />
         <option value="model" />
+        <option value="pgcrypto:install" />
+        <option value="pgcrypto:upgrade" />
         <option value="resource" />
         <option value="rspec:channel" />
         <option value="rspec:controller" />
@@ -200,13 +214,23 @@
         <option value="active_record:application_record" />
         <option value="active_record:multi_db" />
         <option value="application_record" />
+        <option value="base" />
         <option value="benchmark" />
+        <option value="cancan:ability" />
         <option value="channel" />
         <option value="clearance:install" />
         <option value="clearance:routes" />
         <option value="clearance:specs" />
         <option value="clearance:views" />
         <option value="controller" />
+        <option value="doorkeeper:application_owner" />
+        <option value="doorkeeper:confidential_applications" />
+        <option value="doorkeeper:enable_polymorphic_resource_owner" />
+        <option value="doorkeeper:install" />
+        <option value="doorkeeper:migration" />
+        <option value="doorkeeper:pkce" />
+        <option value="doorkeeper:previous_refresh_token" />
+        <option value="doorkeeper:views" />
         <option value="factory_bot:model" />
         <option value="generator" />
         <option value="helper" />
@@ -217,6 +241,8 @@
         <option value="mailer" />
         <option value="migration" />
         <option value="model" />
+        <option value="pgcrypto:install" />
+        <option value="pgcrypto:upgrade" />
         <option value="resource" />
         <option value="rspec:channel" />
         <option value="rspec:controller" />
@@ -440,6 +466,11 @@
               <RakeTaskImpl description="" fullCommand="db:truncate_all" id="truncate_all" />
             </subtasks>
           </RakeTaskImpl>
+          <RakeTaskImpl id="grape">
+            <subtasks>
+              <RakeTaskImpl description="show API routes" fullCommand="grape:routes" id="routes" />
+            </subtasks>
+          </RakeTaskImpl>
           <RakeTaskImpl id="importmap">
             <subtasks>
               <RakeTaskImpl description="Setup Importmap for the app" fullCommand="importmap:install" id="install" />
@@ -451,12 +482,18 @@
             </subtasks>
           </RakeTaskImpl>
           <RakeTaskImpl description="Prints out your Rack middleware stack" fullCommand="middleware" id="middleware" />
+          <RakeTaskImpl id="pgcrypto">
+            <subtasks>
+              <RakeTaskImpl description="Migrate PGCrypto 0.3.x-style columns to 0.4 style" fullCommand="pgcrypto:migrate_old_columns" id="migrate_old_columns" />
+            </subtasks>
+          </RakeTaskImpl>
           <RakeTaskImpl description="Restart app by touching tmp/restart.txt" fullCommand="restart" id="restart" />
           <RakeTaskImpl description="Generate a cryptographically secure secret key (this is typically used to generate a secret for cookie sessions)" fullCommand="secret" id="secret" />
           <RakeTaskImpl description="Run all specs in spec directory (excluding plugin specs)" fullCommand="spec" id="spec" />
           <RakeTaskImpl id="spec">
             <subtasks>
               <RakeTaskImpl description="Run the code examples in spec/models" fullCommand="spec:models" id="models" />
+              <RakeTaskImpl description="Run the code examples in spec/requests" fullCommand="spec:requests" id="requests" />
               <RakeTaskImpl description="" fullCommand="spec:prepare" id="prepare" />
               <RakeTaskImpl description="" fullCommand="spec:statsetup" id="statsetup" />
             </subtasks>

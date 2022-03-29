@@ -85,3 +85,8 @@
     width: 95%;
     margin-left: 2.5%;
 }
+
+.searchEle{
+    display: flex;
+    margin-bottom: 10px;
+}

@@ -2,17 +2,18 @@ require 'rails_helper'
 
 RSpec.describe User, type: :model do
   context 'validation tests' do
-    let (:student) {factoryBot.build(:student)}
-    let (:teacher) {factoryBot.build(:teacher)}
-    let (:department_head) {build(:department_head)}
+    let (:student) {FactoryBot.build(:student)}
+    let (:teacher) {FactoryBot.build(:teacher)}
+    let (:department_head) {FactoryBot.build(:department_head)}
     it 'Ensure name presence' do
       student.name = nil
-      expect(student.save).to eq(false )
+      # puts student
+      expect(student.save).to eq(false)
     end
 
     it 'Ensure email presence' do
       teacher.email = nil
-      expect(teacher.save).to eq(false )
+      expect(teacher.save).to eq(false)
     end
 
     it 'Ensure Phone presence' do

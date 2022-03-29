@@ -1,4 +1,15 @@
 <h1>Courses</h1>
+
+<!--  <form class="form-inline">-->
+<!--    <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">-->
+<!--    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>-->
+<!--  </form>-->
+<%= search_form_for @q do |f| %>
+  <div class="searchEle">
+    <%= f.search_field :course_code_or_course_title_or_semester_cont, class:"form-control mr-sm-2",placeholder:"Search" %>
+    <%= f.submit class: "btn btn-outline-success my-2 my-sm-0" %>
+  </div>
+<% end %>
 <% if current_user.role == 'admin' or current_user.role == 'department_head' %>
 <a href="<%= create_courses_path %>"><button class="btn btn-outline-primary">Add</button></a>
   <%end %>

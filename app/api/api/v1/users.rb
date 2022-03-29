@@ -42,7 +42,7 @@ module V1
 
       desc 'Update a User'
       params do
-        requires :id, type: Integer
+        requires :id, type: String
       end
       put do
         puts params

@@ -83,3 +83,7 @@ gem 'cancancan'
 gem 'grape'
 gem 'grape_on_rails_routes'
 gem 'grape-entity'
+gem 'pgcrypto'
+gem "doorkeeper", "~> 5.5"
+
+gem "ransack", "~> 2.6"

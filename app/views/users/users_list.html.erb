@@ -1,4 +1,12 @@
 <br/>
+
+<%= search_form_for @q do |f| %>
+<div class="searchEle">
+  <%= f.search_field :name_or_email_or_phone_cont, class:"form-control mr-sm-2",placeholder:"Search"  %>
+  <%= f.submit class: "btn btn-outline-success my-2 my-sm-0" %>
+</div>
+
+<% end %>
 <h3> User List</h3>
 <% if @users.count <1 %>
   <h4>No User available!</h4>

@@ -1,8 +1,12 @@
+require './app/services/cgpa'
 class UsersController < Clearance::UsersController
   before_action :create, :only => [:create]
   load_and_authorize_resource
   def index
     @user = current_user
+    if current_user.role == 'student'
+      render json: Cgpa.call(@user)
+    end
   end
 
   def edit
@@ -175,12 +179,16 @@ class UsersController < Clearance::UsersController
 
   def users_list
     if current_user.role== 'admin'
-      @users = User.all
+      @q = User.ransack(params[:q])
+      @q.result.includes(:department, :users)
+      @users = @q.result(distinct: true)
+
     else
-      @teachers = User.where(teacher_department_id:current_user.department_head_department_id)
-      @students = User.where(student_department_id:current_user.department_head_department_id)
+      @q = User.where(teacher_department_id:current_user.department_head_department_id).ransack(params[:q])
+      @teachers = @q.result(distinct: true)
+      @q = User.where(student_department_id:current_user.department_head_department_id).ransack(params[:q])
+      @students = @q.result(distinct: true)
       @users = @teachers+@students
-      @users.delete(current_user)
     end
   end
 

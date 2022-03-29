@@ -1,9 +1,16 @@
+require 'doorkeeper/grape/helpers'
+
 module V1
     class Courses < Grape::API
+      helpers Doorkeeper::Grape::Helpers
+
+      before do
+        doorkeeper_authorize!
+      end
+
       version 'v1', using: :path
       format :json
       prefix :api
-
       resource :courses do
         desc 'Return list of Courses'
         get do

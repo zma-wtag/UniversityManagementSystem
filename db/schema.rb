@@ -10,45 +10,79 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_03_16_045737) do
+ActiveRecord::Schema[7.0].define(version: 2022_03_28_051055) do
   # These are extensions that must be enabled in order to support this database
+  enable_extension "pgcrypto"
   enable_extension "plpgsql"
 
-  create_table "courses", force: :cascade do |t|
+  create_table "courses", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "course_code"
-    t.bigint "teacher_id"
-    t.bigint "department_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "course_title"
     t.float "course_credit"
     t.string "semester"
-    t.index ["department_id"], name: "index_courses_on_department_id"
-    t.index ["teacher_id"], name: "index_courses_on_teacher_id"
+    t.uuid "teacher_id", default: -> { "gen_random_uuid()" }, null: false
+    t.uuid "department_id", default: -> { "gen_random_uuid()" }, null: false
   end
 
-  create_table "departments", force: :cascade do |t|
+  create_table "departments", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "department_name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
+  create_table "oauth_access_grants", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "resource_owner_id", null: false
+    t.uuid "application_id", null: false
+    t.string "token", null: false
+    t.integer "expires_in", null: false
+    t.text "redirect_uri", null: false
+    t.datetime "created_at", null: false
+    t.datetime "revoked_at"
+    t.string "scopes", default: "", null: false
+    t.index ["application_id"], name: "index_oauth_access_grants_on_application_id"
+    t.index ["token"], name: "index_oauth_access_grants_on_token", unique: true
+  end
+
+  create_table "oauth_access_tokens", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "resource_owner_id"
+    t.uuid "application_id"
+    t.string "token", null: false
+    t.string "refresh_token"
+    t.integer "expires_in"
+    t.datetime "revoked_at"
+    t.datetime "created_at", null: false
+    t.string "scopes"
+    t.string "previous_refresh_token", default: "", null: false
+    t.index ["application_id"], name: "index_oauth_access_tokens_on_application_id"
+    t.index ["refresh_token"], name: "index_oauth_access_tokens_on_refresh_token", unique: true
+    t.index ["token"], name: "index_oauth_access_tokens_on_token", unique: true
+  end
+
+  create_table "oauth_applications", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "name", null: false
+    t.string "uid", null: false
+    t.string "secret", null: false
+    t.text "redirect_uri", null: false
+    t.string "scopes", default: "", null: false
+    t.boolean "confidential", default: true, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["uid"], name: "index_oauth_applications_on_uid", unique: true
+  end
+
   create_table "taken_courses", force: :cascade do |t|
-    t.bigint "student_id"
-    t.bigint "course_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.float "gpa"
     t.string "semester"
-    t.index ["course_id"], name: "index_taken_courses_on_course_id"
-    t.index ["student_id"], name: "index_taken_courses_on_student_id"
+    t.uuid "student_id", default: -> { "gen_random_uuid()" }, null: false
+    t.uuid "course_id", default: -> { "gen_random_uuid()" }, null: false
   end
 
-  create_table "users", force: :cascade do |t|
+  create_table "users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "name"
-    t.bigint "student_department_id"
-    t.bigint "teacher_department_id"
-    t.bigint "department_head_department_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "email"
@@ -59,11 +93,15 @@ ActiveRecord::Schema[7.0].define(version: 2022_03_16_045737) do
     t.string "confirmation_token", limit: 128
     t.string "remember_token", limit: 128
     t.integer "role", default: 0
-    t.index ["department_head_department_id"], name: "index_users_on_department_head_department_id"
+    t.uuid "student_department_id", default: -> { "gen_random_uuid()" }
+    t.uuid "teacher_department_id", default: -> { "gen_random_uuid()" }
+    t.uuid "department_head_department_id", default: -> { "gen_random_uuid()" }
     t.index ["email"], name: "index_users_on_email"
     t.index ["remember_token"], name: "index_users_on_remember_token"
-    t.index ["student_department_id"], name: "index_users_on_student_department_id"
-    t.index ["teacher_department_id"], name: "index_users_on_teacher_department_id"
   end
 
+  add_foreign_key "oauth_access_grants", "oauth_applications", column: "application_id"
+  add_foreign_key "oauth_access_grants", "users", column: "resource_owner_id"
+  add_foreign_key "oauth_access_tokens", "oauth_applications", column: "application_id"
+  add_foreign_key "oauth_access_tokens", "users", column: "resource_owner_id"
 end
