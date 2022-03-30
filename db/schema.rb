@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_03_28_051055) do
+ActiveRecord::Schema[7.0].define(version: 2022_03_29_091352) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -22,8 +22,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_03_28_051055) do
     t.string "course_title"
     t.float "course_credit"
     t.string "semester"
-    t.uuid "teacher_id", default: -> { "gen_random_uuid()" }, null: false
-    t.uuid "department_id", default: -> { "gen_random_uuid()" }, null: false
+    t.uuid "teacher_id", null: false
+    t.uuid "department_id", null: false
   end
 
   create_table "departments", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -72,13 +72,13 @@ ActiveRecord::Schema[7.0].define(version: 2022_03_28_051055) do
     t.index ["uid"], name: "index_oauth_applications_on_uid", unique: true
   end
 
-  create_table "taken_courses", force: :cascade do |t|
+  create_table "taken_courses", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.float "gpa"
     t.string "semester"
-    t.uuid "student_id", default: -> { "gen_random_uuid()" }, null: false
-    t.uuid "course_id", default: -> { "gen_random_uuid()" }, null: false
+    t.uuid "student_id", null: false
+    t.uuid "course_id", null: false
   end
 
   create_table "users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -93,9 +93,9 @@ ActiveRecord::Schema[7.0].define(version: 2022_03_28_051055) do
     t.string "confirmation_token", limit: 128
     t.string "remember_token", limit: 128
     t.integer "role", default: 0
-    t.uuid "student_department_id", default: -> { "gen_random_uuid()" }
-    t.uuid "teacher_department_id", default: -> { "gen_random_uuid()" }
-    t.uuid "department_head_department_id", default: -> { "gen_random_uuid()" }
+    t.uuid "student_department_id"
+    t.uuid "teacher_department_id"
+    t.uuid "department_head_department_id"
     t.index ["email"], name: "index_users_on_email"
     t.index ["remember_token"], name: "index_users_on_remember_token"
   end

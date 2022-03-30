@@ -32,6 +32,9 @@
       <td><%=department.teachers.count %></td>
     <td><%=department.students.count %></td>
     <td><%=department.courses.count %></td>
+    <td><a href="<%=show_department_path(department) %>">
+      <input type="button" class="btn btn-outline-success" value="View" />
+    </a></td>
     <%if current_user.role == 'admin' %>
     <td><a href="<%=edit_department_path(department) %>">
       <input type="button" class="btn btn-outline-info" value="Edit" />
@@ -41,9 +44,7 @@
       <input type="button" class="btn btn-outline-danger" value="Delete" />
     </a></td>
     <%end %>
-    <td><a href="<%=show_department_path(department) %>">
-      <input type="button" class="btn btn-outline-success" value="View" />
-    </a></td>
+
 <!--    <td><a href="<%#=show_courses_path(course) %>">-->
 <!--      <input type="button" value="Edit" />-->
 <!--    </a></td>-->

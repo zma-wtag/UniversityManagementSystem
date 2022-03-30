@@ -55,6 +55,14 @@
         <td><a href="<%=courses_list_user_path(user) %>">
           <input type="button" class="btn btn-outline-dark" value="Courses" />
         </a></td>
+        <td>
+          <%if user.role == 'student' %>
+        <a href="<%=user_grade_path(user) %>">
+            <input type="button" class="btn btn-outline-primary" value="Grade Sheet" />
+          </a>
+        <%end %>
+        </td>
+
       </tr>
   <%end %>
     <% end %>

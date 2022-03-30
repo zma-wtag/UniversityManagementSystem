@@ -1,0 +1,43 @@
+<table class="table table-striped">
+  <thead>
+  <tr>
+    <th scope="col">Course Code</th>
+    <th scope="col">Course Title</th>
+    <th scope="col">Department</th>
+    <th scope="col">Semester</th>
+    <th scope="col">Credit</th>
+    <th scope="col">GPA</th>
+    <th scope="col"></th>
+  </tr>
+  </thead>
+  <tbody>
+  <%if @takencourses.count > 0 %>
+  <% @takencourses.each do |takenCourse| %>
+  <%course= takenCourse.course %>
+  <tr>
+    <td><%=course.course_code %></td>
+    <td><%=course.course_title %></td>
+    <td><%=course.department.department_name %></td>
+    <td><%=course.semester %></td>
+    <td><%=course.course_credit %></td>
+    <td><%=takenCourse.gpa %></td>
+    <td><a href="<%=mycourse_details_path(course) %>" class="btn btn-outline-dark">View</a></td>
+  </tr>
+    <%end %>
+  <%else %>
+    <h4 class="text-danger">No Courses Completed Yet!!</h4>
+  <%end %>
+  <tr></tr>
+  <tr class="table-dark">
+    <td>Attempted Credit:</td>
+    <td><%=@gradeInfo[:attemptedCredit] %></td>
+    <td>Completed Credit:</td>
+    <td><%=@gradeInfo[:totalCredit] %></td>
+    <td>CGPA :</td>
+    <td><%=@gradeInfo[:cgpa] %></td>
+    <td></td>
+
+
+  </tr>
+  </tbody>
+</table>

@@ -1,8 +1,8 @@
 class ChangeColumnsToUuid < ActiveRecord::Migration[7.0]
   def change
-    add_column :users, :uuid1, :uuid, default: "gen_random_uuid()"
-    add_column :users, :uuid2, :uuid, default: "gen_random_uuid()"
-    add_column :users, :uuid3, :uuid, default: "gen_random_uuid()"
+    add_column :users, :uuid1, :uuid
+    add_column :users, :uuid2, :uuid
+    add_column :users, :uuid3, :uuid
 
     change_table :users do |t|
       t.remove :student_department_id

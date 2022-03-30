@@ -4,8 +4,12 @@ class CoursesController < ApplicationController
     @q = Course.ransack(params[:q])
     @courses = @q.result(distinct: true)
     if signed_in? and current_user.role =='student'
+      if !current_user.taken_courses.nil?
+        @courses = CompletedCourse.call(@courses,current_user.taken_courses)
+      end
       @mycourses = current_user.student_courses
     end
+    puts 'how many times'
     # render json: @course
     # render json: @mycourses
     # @teachers = User.where.not(teacher_department_id:nil)

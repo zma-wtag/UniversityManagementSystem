@@ -5,7 +5,7 @@ class UsersController < Clearance::UsersController
   def index
     @user = current_user
     if current_user.role == 'student'
-      render json: Cgpa.call(@user)
+      @cgpa = Cgpa.call(@user)
     end
   end
 
@@ -215,10 +215,16 @@ class UsersController < Clearance::UsersController
 
   def enroll_course
     @course = Course.find(params[:course_id])
-    if current_user.student_courses << @course
-      redirect_to courses_path , notice: 'Enrolled'
+    # render json: current_user.taken_courses.include(@course)
+    # render json: AlreadyEnrolled.call(current_user.taken_courses,@course)
+    if !AlreadyEnrolled.call(current_user.taken_courses,@course)
+      if current_user.student_courses << @course
+        redirect_to courses_path , notice: 'Enrolled'
+      else
+        redirect_to courses_path , notice: 'Enrollment failed'
+      end
     else
-      redirect_to courses_path , notice: 'Enrollment failed'
+      redirect_to courses_path , notice: 'Already Enrolled'
     end
   end
 
@@ -246,6 +252,7 @@ class UsersController < Clearance::UsersController
   def mycourses
     if current_user.role == 'student'
       @courses = current_user.student_courses
+      @courses = CompletedCourse.call(@courses,current_user.taken_courses)
     else
       @courses=current_user.teacher_courses
     end
@@ -280,6 +287,15 @@ class UsersController < Clearance::UsersController
     @gradeList = TakenCourse.gpas
     # render json: @course.taken_courses
   end
+
+  def grade_sheet
+    if (current_user.role == 'student' and params[:id]==current_user.id) or
+    @takencourses = User.find(params[:id]).taken_courses.where.not(gpa:nil)
+    @gradeInfo = Cgpa.call(current_user)
+    render 'users/gradesheet'
+    # render json: @gradeInfo
+  end
+
   # private
   def redirect_signed_in_users
     #only for overriding

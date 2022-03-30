@@ -55,6 +55,7 @@ Rails.application.routes.draw do
   get 'mycourse/:course_id/details' , to: 'users#mycourse_details' , as: 'mycourse_details'
   get 'courses/user/:id', to: 'users#courses_view_admin', as: 'courses_list_user'
   get 'delete/user/:id', to: 'users#destroy', as: 'delete_user'
+  get 'user/grade/:id', to: 'users#grade_sheet', as: 'user_grade'
 
   # enroll course
   get 'enroll/:course_id', to: 'users#enroll_course', as: 'enroll_course'

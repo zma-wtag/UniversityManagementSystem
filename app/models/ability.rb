@@ -4,6 +4,10 @@ class Ability
   include CanCan::Ability
 
   def initialize(user)
+    can :grade_sheet, User
+    can :index, Course
+    can :mycourses, User
+    can :mycourse_details , User
     if user.role == 'admin'
       can :manage, :all
       cannot :edit, User

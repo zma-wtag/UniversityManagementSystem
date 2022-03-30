@@ -55,7 +55,10 @@
           </button>
           <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
             <a class="dropdown-item" href="<%=profile_path %>">Profile</a>
-            <%= button_to 'Sign out', sign_out_path, method: :delete , class:'dropdown-item text-danger' %>
+            <%if current_user.role=='student' %>
+            <a class="dropdown-item" href="<%=user_grade_path(current_user) %>">Grade Sheet</a>
+            <%end %>
+              <%= button_to 'Sign out', sign_out_path, method: :delete , class:'dropdown-item text-danger' %>
           </div>
         </div>
       <%end %>
