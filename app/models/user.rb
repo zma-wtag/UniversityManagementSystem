@@ -3,13 +3,13 @@ class User < ApplicationRecord
   belongs_to :department_head_department ,class_name: 'Department', inverse_of: 'department_head', optional: true
   # Student
   belongs_to :student_department ,class_name: 'Department', inverse_of: 'students' ,optional: true
-  has_many :taken_courses, class_name: 'TakenCourse', foreign_key: 'student_id',inverse_of: :student
+  has_many :taken_courses, class_name: 'TakenCourse', foreign_key: 'student_id',dependent: :destroy,inverse_of: :student
   has_many :student_courses , class_name:'Course',  through: :taken_courses, source: 'course'
   # Teacher
   belongs_to :teacher_department ,class_name: 'Department', inverse_of: 'teachers' , optional: true
   has_many :teacher_courses, class_name: 'Course', foreign_key: 'teacher_id', inverse_of: :teacher
 
-  enum role: %i(student teacher department_head admin)
+  enum role: %i(student teacher department_head admin api)
 
   validates :name , presence: true
   validates :email, presence: true
@@ -29,4 +29,7 @@ class User < ApplicationRecord
            class_name: 'Doorkeeper::AccessToken',
            foreign_key: :resource_owner_id,
            dependent: :delete_all # or :destroy if you need callbacks
+
+  has_one_attached :image
+  validates :image, blob: { content_type: :image }
 end

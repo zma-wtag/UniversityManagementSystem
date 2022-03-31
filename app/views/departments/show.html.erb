@@ -12,8 +12,10 @@
           disabled
           <%end %>
   >
+    <%if @department.department_head.nil? %>
+      <option selected >N/A</option>
+  <%end %>
     <% @teachers.each do |teacher| %>
-
       <%if ! @department.department_head.nil? and teacher.id == @department.department_head.id %>
         <option selected value="<%=teacher[:id] %>"><%=teacher[:name] %></option>
       <%else %>

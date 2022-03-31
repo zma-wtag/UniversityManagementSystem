@@ -8,7 +8,13 @@ class UsersController < Clearance::UsersController
       @cgpa = Cgpa.call(@user)
     end
   end
-
+  def viewedByOthers
+    @user = User.find(params[:id])
+    if @user.role == 'student'
+      @cgpa = Cgpa.call(@user)
+    end
+    render 'users/index'
+  end
   def edit
     if current_user.role == 'admin'
       redirect_to profile_path, notice: "admin can't update your profile"
@@ -104,6 +110,9 @@ class UsersController < Clearance::UsersController
       @role = 'student'
     elsif request.path == "/create_teacher"
       @role = 'teacher'
+
+    elsif request.path == "/create_api_user"
+      @role = 'api'
     end
     @user = user_from_params
     if current_user.role == 'admin'
@@ -122,13 +131,17 @@ class UsersController < Clearance::UsersController
 
   def create
     # render json: params
-    @role = user_params.delete(:role)
-    # render json: user_params
-    @user = user_from_params
-    if @user.save
-      redirect_to root_path, notice: "user created"
+    if current_user.role == 'admin' or current_user.role == 'department_head'
+      @role = user_params.delete(:role)
+      # render json: user_params
+      @user = user_from_params
+      if @user.save
+        redirect_to users_list_path, notice: "user created"
+      else
+        redirect_to root_path, notice: 'Failed to create User'
+      end
     else
-      redirect_to root_path, notice: 'Failed to create User'
+      redirect_to root_path, notice: 'not Authorized!'
     end
   end
 
@@ -242,10 +255,14 @@ class UsersController < Clearance::UsersController
   end
   def unenroll_by_admin
     @takencourse = TakenCourse.find(params[:course_id])
-    if TakenCourse.destroy(@takencourse.id)
+    if (current_user.role == 'admin') or (current_user.role == 'teacher' and @takencourse.course.teacher == current_user) or (current_user == @takencourse.student and @takencourse.gpa.nil?)
+      if TakenCourse.destroy(@takencourse.id)
       redirect_to courses_path , notice: 'Un-Enrolled'
-    else
+      else
       redirect_to courses_path , notice: 'Un-Enrollment failed'
+      end
+    else
+      redirect_to courses_path , notice: 'not Authorized!'
     end
   end
 
@@ -274,10 +291,14 @@ class UsersController < Clearance::UsersController
     @takencourse = TakenCourse.find(params[:taken_course_id])
     @course = @takencourse.course
     @gpa = params[:gpa].to_f
-    if @takencourse.update(gpa:@gpa)
-      redirect_to mycourse_details_path(@course), notice: 'GPA Updated'
+    if current_user.role == 'admin' or (current_user.role == 'department_head' and @course.department == current_user.department_head_department) or (current_user == @course.teacher)
+      if @takencourse.update(gpa:@gpa)
+        redirect_to mycourse_details_path(@course), notice: 'GPA Updated'
+      else
+        redirect_to mycourse_details_path(@course), notice: 'GPA Update Failed!'
+      end
     else
-      redirect_to mycourse_details_path(@course), notice: 'GPA Update Failed!'
+      redirect_to mycourse_details_path(@course), notice: 'not Authorized!'
     end
   end
 
@@ -289,11 +310,39 @@ class UsersController < Clearance::UsersController
   end
 
   def grade_sheet
-    if (current_user.role == 'student' and params[:id]==current_user.id) or
-    @takencourses = User.find(params[:id]).taken_courses.where.not(gpa:nil)
-    @gradeInfo = Cgpa.call(current_user)
+    @user = User.find(params[:id])
+    if (['admin', 'teacher', 'department_head'].include? current_user.role) or (current_user.role == 'student' and params[:id]==current_user.id)
+    @takencourses = @user.taken_courses.where.not(gpa:nil)
+    @gradeInfo = Cgpa.call(@user)
     render 'users/gradesheet'
+    else
+      redirect_to root_path, notice: 'Not Authorized !!!'
+    end
     # render json: @gradeInfo
+  end
+
+  def api_user_home
+    if ['api','admin'].include? current_user.role
+      @user = User.find(params[:id])
+      @tokens = @user.access_tokens
+      @count=0
+      render 'users/api_user'
+      # render json: @offsetZone
+    else
+      redirect_to root_path, notice: 'Not Authorized!!'
+    end
+  end
+
+  def create_api_token
+    if ActiveToken.call(current_user)
+      redirect_to api_user_home_path(current_user), notice: 'Active Token Available!!'
+    else
+      if (Doorkeeper::AccessToken.create!(resource_owner_id: current_user.id, expires_in: 2.hours))
+        redirect_to api_user_home_path(current_user), notice: 'Access Token Created!'
+      else
+        redirect_to api_user_home_path(current_user), notice: 'Access Token Creation Failed!'
+      end
+    end
   end
 
   # private
@@ -301,15 +350,15 @@ class UsersController < Clearance::UsersController
     #only for overriding
   end
   def student_params
-    params.require(:user).permit(:name, :email, :phone, :address, :student_department_id, :role)
+    params.require(:user).permit(:name, :email, :phone, :address, :student_department_id, :role, :image)
   end
 
   def teacher_params
-    params.require(:user).permit(:name, :email, :phone, :address, :teacher_department_id, :role)
+    params.require(:user).permit(:name, :email, :phone, :address, :teacher_department_id, :role, :image)
   end
 
   def department_head_params
-    params.require(:user).permit(:name, :email, :phone, :address, :teacher_department_id, :role)
+    params.require(:user).permit(:name, :email, :phone, :address, :teacher_department_id, :role, :image)
   end
 
 end

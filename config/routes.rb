@@ -15,6 +15,7 @@ Rails.application.routes.draw do
   delete "/sign_out" => "clearance/sessions#destroy", as: "sign_out"
   get "/create_student/" => "users#new", as: "create_student"
   get "/create_teacher" => "users#new", as: "create_teacher"
+  get "/create_api_user" => "users#new", as: "create_api_user"
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Defines the root path route ("/")
@@ -56,6 +57,9 @@ Rails.application.routes.draw do
   get 'courses/user/:id', to: 'users#courses_view_admin', as: 'courses_list_user'
   get 'delete/user/:id', to: 'users#destroy', as: 'delete_user'
   get 'user/grade/:id', to: 'users#grade_sheet', as: 'user_grade'
+  get 'user/profile/:id', to: 'users#viewedByOthers', as: 'viewed_by_others'
+  get 'user_api/:id', to: 'users#api_user_home', as: 'api_user_home'
+  get 'token_generate', to: 'users#create_api_token', as: 'api_token_generate'
 
   # enroll course
   get 'enroll/:course_id', to: 'users#enroll_course', as: 'enroll_course'

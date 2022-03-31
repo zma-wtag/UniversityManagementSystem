@@ -27,9 +27,10 @@
   <%= form.label :role %>
   <%= form.text_field :role, type: 'text', :value=>@role , :readonly => true , class: "form-control"  %>
 </div>
-
+<%if @role != 'api' %>
 <div class="text-field form-group">
   <%= form.label :Department %>
 <%= select_tag(@role+"_department", options_for_select(@departments,params[:per_page].to_i),{ :name => "user["+@role+"_department]", class: "form-control"}) %>
 </div>
+  <%end %>
 <br/>

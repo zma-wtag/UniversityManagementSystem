@@ -5,28 +5,27 @@ class Ability
 
   def initialize(user)
     can :grade_sheet, User
+    can :read, :all
     can :index, Course
     can :mycourses, User
     can :mycourse_details , User
+
+
+
     if user.role == 'admin'
       can :manage, :all
       cannot :edit, User
     end
 
-    if user.role == 'department_head' or user.role == 'student'
-      can :read, :all
-      can :edit, User
-      can :update, User
-      can :mycourses, User
-      can :mycourse_details, User
-    end
 
     if user.role == 'department_head'
       # course
+      can :viewedByOthers, User
       can :new, Course
       can :create, Course
       can :update, Course
       can :destroy, Course
+      can :addgpa, User
 
       # User
       can :new, User
@@ -53,6 +52,24 @@ class Ability
       can :enroll_course, User
       can :unenroll_course, User
       can :show_teacher, Department
+      can :edit, User
+      can :update, User
+    end
+
+    if user.role == 'teacher'
+      can :unenroll_by_admin, User
+      can :show_teacher, Department
+      can :addgpa, User
+      can :viewedByOthers, User
+      can :grade_sheet, User
+      can :edit, User
+      can :update, User
+    end
+
+    if user.role== 'api'
+      can :api_user_home, User
+      can :create_api_token, User
+      can :index, User
     end
     # Define abilities for the passed in user here. For example:
     #

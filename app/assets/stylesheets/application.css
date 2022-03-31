@@ -27,7 +27,7 @@
     font-size: 18px;
 }
 
-.card button {
+.card #editButtonProfile {
     border: none;
     outline: 0;
     display: inline-block;
@@ -46,7 +46,7 @@
     color: black;
 }
 
-.card button:hover, a:hover {
+.card #editButtonProfile:hover, a:hover {
     opacity: 0.7;
 }
 
@@ -67,6 +67,7 @@
     /*margin-top: 36px;*/
     width: 95%;
     margin-left: 5%;
+    margin-top: 50px;
 
 }
 
@@ -80,7 +81,6 @@
 .nav-userinfo{
     display: flex;
 }
-
 .app-container{
     width: 95%;
     margin-left: 2.5%;

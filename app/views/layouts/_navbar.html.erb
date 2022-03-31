@@ -1,7 +1,15 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
+<%if current_user.role == 'api' %>
+  <style>
+    #navbarNav{
+        justify-content: space-between;
+    }
 
+  </style>
+<%end %>
+<nav class="navbar fixed-top navbar-expand-lg navbar-light bg-light">
   <div class="collapse navbar-collapse" id="navbarNav">
     <a class="navbar-brand" href="<%=root_path %>">University Management System</a>
+    <%if current_user.role != 'api' %>
     <ul class="navbar-nav">
       <li class="nav-item active">
         <a class="nav-link" href="<%=courses_path %>">Courses</a>
@@ -22,6 +30,11 @@
       <li class="nav-item">
         <a class="nav-link" href="<%=create_teacher_path %>">Add Teacher</a>
       </li>
+      <%if current_user.role == 'admin' %>
+        <li class="nav-item">
+        <a class="nav-link" href="<%=create_api_user_path %>">Add API user</a>
+      </li>
+          <%end %>
         <%end %>
       <%if current_user.role != 'admin' %>
       <li class="nav-item">
@@ -44,6 +57,7 @@
 
 
   </div>
+    <%end %>
   <div class="nav-userinfo">
     <%if signed_in? %>
       <% if current_user.name.nil? %>

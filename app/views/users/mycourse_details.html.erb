@@ -24,7 +24,7 @@
     <tbody>
     <% @course.taken_courses.each do |taken_course| %>
       <tr>
-        <td><%=taken_course.student[:name] %></td>
+       <td><a href="<%=viewed_by_others_path(taken_course.student) %>"><%=taken_course.student[:name] %></a></td>
         <td><%=taken_course.student[:phone] %></td>
         <td><%=taken_course.student[:email] %></td>
 
@@ -41,13 +41,16 @@
                     <select id="gpa_input"
                             class="custom-select my-1 mr-sm-2"
                             name="<%="gpa" %>"
-                            <% if current_user.role == 'student' or (current_user.role=='department_head' and current_user.department_head_department_id != @course.department_id)%>
+                            <% if current_user.role == 'student' or (current_user.role=='department_head' and current_user.department_head_department_id != @course.department_id) or (current_user.role == 'teacher' and @course.teacher != current_user)%>
                             disabled
                             <%end %>
                             >
-
+                      <%if taken_course.gpa.nil? %>
+                        <option value="nil" selected>N/A</option>
+                      <%end %>
                       <% @gradeList.each do |grade,value| %>
                         <!--                      <td>TakenGpa: <%#=@gradeList[taken_course.gpa] %>  Value: <%#=value %></td>-->
+
                         <% if @gradeList[taken_course.gpa] == value %>
                           <option value="<%=value %>" selected ><%=grade %> </option>
                         <%else %>
@@ -56,7 +59,7 @@
                       <% end %>
                     </select>
                       <%end %>
-                    <% if current_user.role == 'student' or (current_user.role=='department_head' and current_user.department_head_department_id != @course.department_id)%>
+                    <% if current_user.role == 'student' or (current_user.role=='department_head' and current_user.department_head_department_id != @course.department_id) or (current_user.role == 'teacher' and @course.teacher != current_user)  %>
                       <%else %>
                       <div class="col-auto">
                         <button type="submit" class="btn btn-primary btn-sm">Submit</button>
@@ -67,7 +70,7 @@
               </div>
             </form>
           </td>
-        <% if current_user.role == 'student' or (current_user.role=='department_head' and current_user.department_head_department_id != @course.department_id)%>
+        <% if current_user.role == 'student' or (current_user.role=='department_head' and current_user.department_head_department_id != @course.department_id) or (current_user.role == 'teacher' and @course.teacher != current_user)%>
         <%else %>
       <td><a href="<%=unenroll_by_admin_path(taken_course) %>">
           <input type="button" class="btn btn-outline-warning" value="Un-enroll" />

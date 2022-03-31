@@ -1,28 +1,33 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
 <div class="card">
-  <img src="https://cdn0.iconfinder.com/data/icons/communication-line-10/24/account_profile_user_contact_person_avatar_placeholder-512.png" alt="John" style="width:100%">
-  <h1><%=current_user.name %></h1>
-  
-  <% if current_user.student_department == nil and current_user.teacher_department.nil? and current_user.department_head_department.nil? %>
+  <%if @user.image.blob.nil? %>
+    <img src="https://cdn0.iconfinder.com/data/icons/communication-line-10/24/account_profile_user_contact_person_avatar_placeholder-512.png" alt="<%= @user.name %>" style="width:100%">
+  <%else %>
+    <%#=current_user.image.location%>
+    <img src="<%=url_for(@user.image) %>"  alt="<%= @user.name %>" style="width:100%">
+  <%end %>
+    <h1><%=@user.name %></h1>
+  <div class="p-3 mb-2 bg-info text-white mw-100"><%=@user.role.upcase %></div>
+  <% if @user.student_department == nil and @user.teacher_department.nil? and @user.department_head_department.nil? %>
     <p class="title">N/A</p>
-  <%elsif !current_user.teacher_department.nil? %>
-    <p class="title"><%=current_user.teacher_department.department_name %></p>
-    <%elsif !current_user.student_department.nil? %>
-        <p class="title"><%=current_user.student_department.department_name %></p>
-        <p><a href="<%=user_grade_path(current_user) %>">CGPA: <%=@cgpa[:cgpa] %></a></p>
+  <%elsif !@user.teacher_department.nil? %>
+    <p class="title"><%=@user.teacher_department.department_name %></p>
+    <%elsif !@user.student_department.nil? %>
+        <p class="title"><%=@user.student_department.department_name %></p>
+        <p><a href="<%=user_grade_path(@user) %>">CGPA: <%=@cgpa[:cgpa] %></a></p>
 
-      <%elsif !current_user.department_head_department.nil? %>
-          <p class="title"><%=current_user.department_head_department.department_name %></p>
+      <%elsif !@user.department_head_department.nil? %>
+          <p class="title"><%=@user.department_head_department.department_name %></p>
   <%end %>
 
-  <p>Email: <%=current_user.email %></p>
-  <p>Phone: <%=current_user.phone %></p>
-  <p>Address: <%=current_user.address %></p>
+  <p>Email: <%=@user.email %></p>
+  <p>Phone: <%=@user.phone %></p>
+  <p>Address: <%=@user.address %></p>
 
 
   <p>---- University</p>
-  <%if current_user.role != 'admin' %>
-  <a href="<%=profile_edit_page_path %>" class=""><p><button>Edit</button></p></a>
+  <%if @user.role != 'admin' and current_user.role !='admin'  and current_user == @user%>
+  <a href="<%=profile_edit_page_path %>" class=""><p><button id="editButtonProfile">Edit</button></p></a>
   <%end %>
 </div>

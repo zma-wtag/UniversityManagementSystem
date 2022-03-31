@@ -93,8 +93,7 @@ Doorkeeper.configure do
   # Access token expiration time (default: 2 hours).
   # If you want to disable expiration, set this to `nil`.
   #
-  # access_token_expires_in 2.hours
-
+  access_token_expires_in 1.minute
   # Assign custom TTL for access tokens. Will be used instead of access_token_expires_in
   # option if defined. In case the block returns `nil` value Doorkeeper fallbacks to
   # +access_token_expires_in+ configuration option value. If you really need to issue a
@@ -111,7 +110,6 @@ Doorkeeper.configure do
   # custom_access_token_expires_in do |context|
   #   context.client.additional_settings.implicit_oauth_expiration
   # end
-
   # Use a custom class for generating the access token.
   # See https://doorkeeper.gitbook.io/guides/configuration/other-configurations#custom-access-token-generator
   #

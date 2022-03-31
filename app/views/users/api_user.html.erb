@@ -1,0 +1,67 @@
+<%if current_user.role == 'api' %>
+  <br>
+<a href="<%=api_token_generate_path %>"><button class="btn btn-success">Generate Token</button></a>
+  <br/>
+<%end %>
+  <table class="table table-bordered">
+  <thead>
+  <tr>
+    <th scope="col">#</th>
+    <th scope="col">Access Token</th>
+    <th scope="col">Issue Date</th>
+    <th scope="col">Expired At</th>
+    <th scope="col">Status</th>
+  </tr>
+  </thead>
+  <tbody>
+
+  <%for token in @tokens.order({ created_at: :desc }) %>
+  <tr>
+    <th scope="row"><%=@count+=1 %></th>
+    <td>
+      <div style="display:flex">
+        <input
+          <%if token.expired? %>
+          class="form-control is-invalid"
+            <%@disabled='disabled' %>
+            <%else %>
+          class="form-control is-valid"
+            <%@disabled='' %>
+          <%end %>
+          type="text"
+          style="width: 70%"
+          value="<%=token.token %>"
+          readonly id="myInput<%=@count %>">
+        <button style="margin-left: 5px" onclick="myFunction('myInput<%=@count %>')" class="btn btn-outline-dark" <%=@disabled %>>Copy</button>
+      </div>
+
+    </td>
+    <%#@createdTime = (token.created_at).change(zone: "Dhaka") %>
+    <%#@expireTime = (token.created_at + token.expires_in).change(zone: "Dhaka") %>
+    <td><%=token.created_at %></td>
+    <td><%=(token.created_at + token.expires_in) %></td>
+    <%if token.expired? %>
+      <td><div class="p-2 mb-1 bg-dark text-white">Expired</div></td>
+  <%else %>
+      <td><div class="p-2 mb-1 bg-success text-white">Active</div></td>
+  <%end %>
+  </tr>
+    <%end %>
+  </tbody>
+</table>
+
+<script>
+    function myFunction(inputField) {
+        let copyText = document.getElementById(inputField);
+        copyText.select();
+        copyText.setSelectionRange(0, 99999);
+        navigator.clipboard
+            .writeText(copyText.value)
+            .then(() => {
+                alert("successfully copied \n" + copyText.value);
+            })
+            .catch(() => {
+                alert("something went wrong");
+            });
+    }
+</script>

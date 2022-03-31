@@ -1,4 +1,5 @@
 <br/>
+<STYLE>A {text-decoration: none; color: black} </STYLE>
 
 <%= search_form_for @q do |f| %>
 <div class="searchEle">
@@ -19,7 +20,7 @@
       <th>Phone</th>
       <th>Address</th>
       <th>Department</th>
-      <th>Role</th>
+      <th><%= sort_link(@q, :role)  %></th>
       <th>Edit</th>
       <%if current_user.role == 'admin' %>
     <th>Delete</th>
@@ -32,7 +33,7 @@
     <% @users.each do |user| %>
     <%if user.role != 'admin' %>
       <tr>
-        <td><%=user.name %></td>
+        <td><a href="<%=viewed_by_others_path(user) %>"><%=user.name %></a></td>
         <td><%=user.email %></td>
         <td><%=user.phone %></td>
         <td><%=user.address %></td>
@@ -40,8 +41,10 @@
           <td><%=user.student_department.department_name %></td>
         <%elsif user.role == 'teacher' %>
           <td><%=user.teacher_department.department_name %></td>
-          <%else %>
+          <%elsif user.role == 'department_head' %>
           <td><%=user.department_head_department.department_name %></td>
+          <%else %>
+        <td>N/A</td>
       <%end %>
         <td><%=user.role %></td>
         <td><a href="<%=edit_user_admin_path(user) %>">
@@ -52,14 +55,23 @@
           <input type="button" class="btn btn-danger" value="Delete" />
         </a></td>
           <%end %>
+        <%if user.role != 'api' %>
         <td><a href="<%=courses_list_user_path(user) %>">
           <input type="button" class="btn btn-outline-dark" value="Courses" />
         </a></td>
+          <%else %>
+        <td></td>
+          <%end %>
+
         <td>
           <%if user.role == 'student' %>
         <a href="<%=user_grade_path(user) %>">
             <input type="button" class="btn btn-outline-primary" value="Grade Sheet" />
           </a>
+          <%elsif user.role == 'api' and current_user.role == 'admin' %>
+            <a href="<%=api_user_home_path(user) %>">
+              <input type="button" class="btn btn-outline-success" value="Access Tokens" />
+            </a>
         <%end %>
         </td>
 

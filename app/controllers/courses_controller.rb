@@ -14,6 +14,9 @@ class CoursesController < ApplicationController
     # render json: @mycourses
     # @teachers = User.where.not(teacher_department_id:nil)
     # render json: @courses
+    if current_user.role == 'api'
+      redirect_to api_user_home_path(current_user)
+    end
 
   end
   def new
